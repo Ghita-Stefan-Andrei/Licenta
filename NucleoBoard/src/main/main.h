@@ -1,4 +1,6 @@
 #pragma once
+#include "defines.h"
+#include <NTPClient_Generic.h>
 #define TIME_ZONE_OFFSET_HRS (3)
 
 void initEthernet()
