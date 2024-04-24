@@ -9,7 +9,7 @@ void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 5000);
 
-  /*// Ethernet Set Up //
+  // Ethernet Set Up //
   Serial.print(F("\nStart Ethernet_NTPClient_Basic_STM32 on ")); Serial.print(BOARD_NAME);
   Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
   Serial.println(ETHERNET_WEBSERVER_STM32_VERSION);
@@ -25,7 +25,7 @@ void setup() {
   timeClient.setUpdateInterval(SECS_IN_HR);
   
   Serial.println("Using NTP Server " + timeClient.getPoolServerName());
-  // End Time Client //*/
+  // End Time Client //
 
   pinMode(PC8, INPUT);
   lastPinState = digitalRead(PC8);
@@ -36,18 +36,23 @@ void loop() {
   bool currentPinState = digitalRead(PC8);
   if(currentPinState != lastPinState)
   {
-    uint8_t slope[] = {0x00};
-    if(currentPinState == HIGH) slope[0] = RISING_SLOPE;
-    if(currentPinState == LOW)  slope[0] = FALLING_SLOPE;
-    
-    Packet pack(slope, sizeof(slope));
-    Serial.print(pack.buildHexStringPacket());
-    delay(100);
+    timeClient.update();
+    if (timeClient.updated())
+    {
+      uint8_t data[TIME_TO_BYTE_ARRAY_LEN + SLOPE_BYTE];
+      getTimeStampAsByteArray(&timeClient, data);
+
+      if(currentPinState == HIGH) data[LAST_DATA_BYTE] = RISING_SLOPE;
+      if(currentPinState == LOW)  data[LAST_DATA_BYTE] = FALLING_SLOPE;
+
+      Packet pack(data, sizeof(data));
+      Serial.print(pack.buildHexStringPacket());
+    }
   }
   lastPinState = currentPinState;
-  /*
   
-  timeClient.update();
+  
+  /*timeClient.update();
   
 
   if (timeClient.updated())

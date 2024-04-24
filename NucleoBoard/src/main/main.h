@@ -3,6 +3,9 @@
 #include <NTPClient_Generic.h>
 #include "COM_Protocol.h"
 
+#define TIME_TO_BYTE_ARRAY_LEN  6
+#define SLOPE_BYTE              1
+#define LAST_DATA_BYTE          TIME_TO_BYTE_ARRAY_LEN + SLOPE_BYTE - 1
 #define TIME_ZONE_OFFSET_HRS (3)
 
 void initEthernet()
@@ -41,4 +44,14 @@ void initEthernet()
   // you're connected now, so print out the data
   Serial.print(F("You're connected to the network, IP = "));
   Serial.println(Ethernet.localIP());  
+}
+
+void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data)
+{
+  data[0] = timeClient->getYear() - 2000; //to get a value to fit in an uint8_t assuming this code wont be used after the year 2255
+  data[1] = timeClient->getMonth();
+  data[2] = timeClient->getDay();
+  data[3] = timeClient->getHours();
+  data[4] = timeClient->getMinutes();
+  data[5] = timeClient->getSeconds();
 }
