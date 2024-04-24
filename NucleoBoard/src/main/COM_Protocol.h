@@ -12,7 +12,7 @@
 
 class Packet
 {
-  public:
+  private:
     uint8_t  startByte;
     uint8_t* dataBytes;
     uint8_t  checkSum;
@@ -20,8 +20,51 @@ class Packet
     uint8_t* buildPacket;
     char*    builtPacket;
   public:
+    /**
+      * @brief Constructor pentru clasa Packet.
+      *
+      * Acest constructor inițializează un nou obiect Packet cu datele specificate.
+      * Setează byte-ul de start la o valoare predefinită, alocă și copiază datele primite
+      * într-un buffer intern, și calculează suma de control pentru pachet.
+      *
+      * @param data Pointer către array-ul de date care va fi inclus în pachet.
+      * @param length Lungimea array-ului de date, în octeți.
+      *
+      * @note Memoria pentru `dataBytes` este alocată dinamic și este eliberată în deconstructor.
+      */
     Packet(const uint8_t* data, uint8_t length);
-    ~Packet();
+    
+    /**
+      * @brief Calculează suma de control pentru pachet.
+      * 
+      * Inițializează suma de control cu valoarea startByte, apoi aplică XOR între suma de control 
+      * curentă și fiecare octet de date din pachet, actualizând suma de control.
+      * 
+      * Această metodă actualizează membrul 'checkSum' al clasei.
+      *
+      * @note Această metodă nu are parametri de intrare și nu returnează o valoare, ci
+      *       doar actualizează starea internă a obiectului Packet.
+      */
     void calculateCheckSum();
-    char* sendPacket();
+
+    /**
+      * @brief Construiește și returnează un pachet de date sub formă de șir de caractere hexazecimale.
+      *
+      * Funcția generează un pachet de date ce include un octet de start, dimensiunea datelor,
+      * datele propriu-zise și o sumă de control, toate acestea fiind apoi convertite în format hexazecimal.
+      * Pachetul generat este alocat dinamic și va fi eliberat automat de deconstructorul clasei.
+      *
+      * @return Un pointer către pachetul hexazecimal construit sub formă de șir de caractere.
+      *         Acest șir este terminat cu caracterul null pentru a putea fi utilizat ca și C-string.
+      */
+    char* buildHexStringPacket();
+
+    /**
+      * @brief Deconstructorul pentru clasa Packet.
+      *
+      * Acest deconstructor eliberează memoria alocată dinamic pentru câmpurile 'dataBytes', 'buildPacket' și 'builtPacket'.
+      * Este esențial să te asiguri că obiectul Packet este deconstruit doar după ce pachetul a fost trimis și
+      * nu mai este necesar, pentru a evita utilizarea unor referințe invalide la memoria dealocată.
+      */
+    ~Packet();
 };

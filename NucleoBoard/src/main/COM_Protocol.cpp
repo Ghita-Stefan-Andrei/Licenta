@@ -18,7 +18,7 @@ void Packet::calculateCheckSum()
     }
 }
 
-char* Packet::sendPacket()
+char* Packet::buildHexStringPacket()
 {
 	const char hexDigits[] = "0123456789ABCDEF";
 
@@ -51,5 +51,5 @@ Packet::~Packet()
 {
     delete[] this->dataBytes; 
     delete[] this->buildPacket;
-    delete[] this-> builtPacket;
+    delete[] this->builtPacket; //!warning: Object should be deconstructed after the packet was sent.
 }
