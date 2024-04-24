@@ -11,7 +11,7 @@ Packet::Packet(const uint8_t* data, uint8_t length)
 
 void Packet::calculateCheckSum()
 {
-    this->checkSum = this->startByte;
+    this->checkSum = this->startByte ^ this->dataSize;
     for (uint16_t dataByteIndex = 0; dataByteIndex < this->dataSize; dataByteIndex++) 
     {
         this->checkSum ^= this->dataBytes[dataByteIndex];  
