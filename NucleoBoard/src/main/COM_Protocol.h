@@ -9,6 +9,8 @@
 #define PACKET_OFFSET EXTRA_BYTES - 1
 #define FIRST_BYTE    0
 #define SECOND_BYTE   1
+#define TRIGGER_BYTE  0xAB
+#define BOOT_BYTE     0xAC
 
 class Packet
 {
