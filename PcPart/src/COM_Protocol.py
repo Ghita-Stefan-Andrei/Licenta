@@ -1,46 +1,93 @@
 from functools import reduce
 
+class StatusLog:
+    WRONG_START_BYTE = False
+    RIGHT_START_BYTE = True
+
+    INVALID_CHECK_SUM = False
+    VALID_CHECK_SUM   = True
+
+class ByteDex:
+    def getByteFromStr(byte):
+        return int(byte, 16)
+    
+    TYPE_BYTE_POSITION       = 2
+    TIME_FIRST_BYTE_POSITION = 3
+    SLOPE_BYTE_POSITION      = TIME_FIRST_BYTE_POSITION + 6
+
+    YEAR_OFFSET   = 0
+    MONTH_OFFSET  = 1
+    DAY_OFFSET    = 2
+    HOUR_OFFSET   = 3
+    MINUTE_OFFSET = 4
+    SECOND_OFFSET = 5
+
+    START_BYTE    = 0xAA
+    TRIGGER_BYTE  = 0xAB
+    BOOT_BYTE     = 0xAC
+    RISING_SLOPE  = 0x01
+    FALLING_SLOPE = 0x10
+
+class Format:
+    TIME_DISPLAY_FORMAT = '0>2'
+    YEAR_OFFSET = 2000
+
 class InterpretPacket:
-    def __init__(self):
+    def __init__(self, bitRate):
         self.individualBytes = []
+        self.bitRate = bitRate
 
     def checkHeader(self, header):
         startByte = header[0:2]
         dataLenByte = header[2:]
 
         retHeader, retStatus, length = 0, 0, 0
-        if startByte == 'AA':
+        if ByteDex.getByteFromStr(startByte) == ByteDex.START_BYTE:
             retHeader = header
-            retStatus = 1
-            length = 2 * (int(dataLenByte, 16) + 1)
+            retStatus = StatusLog.RIGHT_START_BYTE
+            length = 2 * (ByteDex.getByteFromStr(dataLenByte) + 1)
         else:
-            retHeader, retStatus, length = "", -1, 0
+            retHeader, retStatus, length = "", StatusLog.WRONG_START_BYTE, 0
 
         return retHeader, retStatus, length
     
     def checkSumCheck(self, packet): 
         sliceBytes = 2
-        self.individualBytes = [int(packet[i:i+sliceBytes], 16) for i in range(0, len(packet), sliceBytes)]
-        if reduce(lambda x, y: x ^ y, self.individualBytes) != 0: return -1 #checkSum
-        return 1
+        self.individualBytes = [ByteDex.getByteFromStr(packet[i:i+sliceBytes]) for i in range(0, len(packet), sliceBytes)]
+        if reduce(lambda x, y: x ^ y, self.individualBytes) != 0: return StatusLog.INVALID_CHECK_SUM #checkSum
+        return StatusLog.VALID_CHECK_SUM
 
     def decodeTriggerPacket(self, packet):
-        year   = self.individualBytes[3] + 2000;
-        month  = self.individualBytes[4]
-        day    = self.individualBytes[5]
-        hour   = self.individualBytes[6]
-        minute = self.individualBytes[7]
-        second = self.individualBytes[8] 
+        year   = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.YEAR_OFFSET] + Format.YEAR_OFFSET;
+        month  = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.MONTH_OFFSET]
+        day    = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.DAY_OFFSET]
+        hour   = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.HOUR_OFFSET]
+        minute = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.MINUTE_OFFSET]
+        second = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.SECOND_OFFSET] 
 
-        slope  = 'Rising Slope' if self.individualBytes[9] == int('01', 16) else 'Falling Slope' if self.individualBytes[9] == int('10', 16) else ""
+        slope = (
+                'Rising Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
+                'Falling Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
+                "Error: Slope byte missing/wrong."
+                )
 
-        return f"Change detected at {hour:0>2}:{minute:0>2}:{second:0>2} on {day:0>2}/{month:0>2}/{year}\nSlope type: {slope}\nPacket: {packet}\n"
+        return (
+                f"Change detected at {hour:{Format.TIME_DISPLAY_FORMAT}}:"
+                f"{minute:{Format.TIME_DISPLAY_FORMAT}}:"
+                f"{second:{Format.TIME_DISPLAY_FORMAT}} on "
+                f"{day:{Format.TIME_DISPLAY_FORMAT}}/"
+                f"{month:{Format.TIME_DISPLAY_FORMAT}}/"
+                f"{year}\n"
+                f"Slope type: {slope}\n"
+                f"Packet: {packet}\n"
+               )
 
     def decodePacket(self, packet):
         decodedData = ''
-        if self.individualBytes[2] == int('AB', 16):
+        if self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.TRIGGER_BYTE:
             decodedData = self.decodeTriggerPacket(packet)
-        elif self.individualBytes[2] == int('AC', 16):
+
+        elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.BOOT_BYTE:
             decodedData = f'Board booted up\nPacket: {packet}\n'
         
         return decodedData
