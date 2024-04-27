@@ -1,4 +1,6 @@
 from functools import reduce
+import re
+import os
 
 class StatusLog:
     WRONG_START_BYTE = False
@@ -11,6 +13,7 @@ class ByteDex:
     def getByteFromStr(byte):
         return int(byte, 16)
     
+    HEADER_LENGTH            = 4 #bytes read from serial
     TYPE_BYTE_POSITION       = 2
     TIME_FIRST_BYTE_POSITION = 3
     SLOPE_BYTE_POSITION      = TIME_FIRST_BYTE_POSITION + 6
@@ -33,9 +36,8 @@ class Format:
     YEAR_OFFSET = 2000
 
 class InterpretPacket:
-    def __init__(self, bitRate):
+    def __init__(self):
         self.individualBytes = []
-        self.bitRate = bitRate
 
     def checkHeader(self, header):
         startByte = header[0:2]
@@ -91,4 +93,25 @@ class InterpretPacket:
             decodedData = f'Board booted up\nPacket: {packet}\n'
         
         return decodedData
-        
+
+def getSerialSettings(consoleXfile):
+    com, bitRate = '', 0
+    if consoleXfile == 'keyboard':
+        while True:
+            comIn = input("Enter com number (COMx): ").upper()
+            if re.match(r'^COM\d+$', comIn):
+                com = comIn
+                break
+            else:
+                print("Input doesn't respect the COMx format.")
+
+        bitRate = int(input('Insert bit rate:'))
+    elif consoleXfile == 'file':
+        basePath = os.path.dirname(__file__)
+        filePath = os.path.join(basePath[:-3], 'serialSettings.txt')
+        with open(filePath, 'r') as file:
+            line = file.readline().strip().split(',')
+            com, bitRate = line
+    else:
+        print('Invalid method.')
+    return com, bitRate
