@@ -1,6 +1,5 @@
 from functools import reduce
 import re
-import os
 
 class StatusLog:
     WRONG_START_BYTE = False
@@ -94,7 +93,7 @@ class InterpretPacket:
         
         return decodedData
 
-def getSerialSettings(consoleXfile):
+def getSerialSettings(consoleXfile, filePath):
     com, bitRate = '', 0
     if consoleXfile == 'keyboard':
         while True:
@@ -107,8 +106,8 @@ def getSerialSettings(consoleXfile):
 
         bitRate = int(input('Insert bit rate:'))
     elif consoleXfile == 'file':
-        basePath = os.path.dirname(__file__)
-        filePath = os.path.join(basePath[:-3], 'serialSettings.txt')
+        #basePath = os.path.dirname(__file__)
+        #filePath = os.path.join(basePath[:-3], 'serialSettings.txt')
         with open(filePath, 'r') as file:
             line = file.readline().strip().split(',')
             com, bitRate = line

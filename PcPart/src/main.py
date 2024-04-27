@@ -7,14 +7,17 @@ from COM_Protocol import getSerialSettings
 
 parser = argparse.ArgumentParser(description = "Select in serial setting are read from file or inserted manually")
 parser.add_argument("--source", choices = ['keyboard', 'file'], required = True, help = "Specify the input source: 'keyboard' for input from keyboard, 'file' for input from a file.")
+parser.add_argument("--filePath", type = str)
+
 args = parser.parse_args()
 
-com, bitRate = getSerialSettings(args.source)
+com, bitRate = getSerialSettings(args.source, args.filePath)
 
 decoder = InP()
 
 ser = serial.Serial(com, bitRate)
 print(f'Serial configured on {com} with {bitRate} bitrate.')
+print('Listening...')
 #ser = serial.Serial('COM3', 115200)
 
 while True:

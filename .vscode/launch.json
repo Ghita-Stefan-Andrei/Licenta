@@ -9,7 +9,8 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args": ["--source", "file"],
+            "args": ["--source", "file",
+                     "--filePath", "C:\\Users\\Asus\\Desktop\\ProiectLicenta\\PcPart\\serialSettings.txt"],
             "console": "integratedTerminal"
         }
     ]
