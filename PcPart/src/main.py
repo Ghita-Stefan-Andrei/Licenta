@@ -15,3 +15,5 @@ while True:
             print(decoder.decodePacket(packet))
         elif decoder.checkSumCheck(packet) == -1:
             print('Error: Invalid check sum')
+    elif status == -1:
+        print(f'Error: Invalid start byte, supposed to be \'AA\', but received {header[0:2]}')

@@ -3,10 +3,7 @@
 #include <NTPClient_Generic.h>
 #include "COM_Protocol.h"
 
-#define TIME_TO_BYTE_ARRAY_LEN  6
-#define SLOPE_BYTE              1
-#define TYPE_BYTE               1
-#define LAST_DATA_BYTE          TIME_TO_BYTE_ARRAY_LEN + SLOPE_BYTE + TYPE_BYTE - 1
+#define SIGNAL_MONITOR_PIN PC8
 #define TIME_ZONE_OFFSET_HRS (3)
 
 void initEthernet()
@@ -49,10 +46,10 @@ void initEthernet()
 
 void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data)
 {
-  data[1] = timeClient->getYear() - 2000; //to get a value to fit in an uint8_t assuming this code wont be used after the year 2255
-  data[2] = timeClient->getMonth();
-  data[3] = timeClient->getDay();
-  data[4] = timeClient->getHours();
-  data[5] = timeClient->getMinutes();
-  data[6] = timeClient->getSeconds();
+  data[BYTES_BEFORE_TIME_DATA + 0] = timeClient->getYear() - 2000; //to get a value to fit in an uint8_t assuming this code wont be used after the year 2255
+  data[BYTES_BEFORE_TIME_DATA + 1] = timeClient->getMonth();
+  data[BYTES_BEFORE_TIME_DATA + 2] = timeClient->getDay();
+  data[BYTES_BEFORE_TIME_DATA + 3] = timeClient->getHours();
+  data[BYTES_BEFORE_TIME_DATA + 4] = timeClient->getMinutes();
+  data[BYTES_BEFORE_TIME_DATA + 5] = timeClient->getSeconds();
 }

@@ -27,27 +27,27 @@ void setup() {
   //Serial.println("Using NTP Server " + timeClient.getPoolServerName());
   // End Time Client //
 
-  pinMode(PC8, INPUT);
-  lastPinState = digitalRead(PC8);
+  pinMode(SIGNAL_MONITOR_PIN, INPUT);
+  lastPinState = digitalRead(SIGNAL_MONITOR_PIN);
 
   pinMode(LED_BLUE, OUTPUT);
   digitalWrite(LED_BLUE, HIGH);
 
-  uint8_t data[TYPE_BYTE]; data[0] = BOOT_BYTE;
+  uint8_t data[TYPE_BYTE]; data[TYPE_BYTE_POSITION] = BOOT_BYTE;
   Packet pack(data, sizeof(data));
   Serial.print(pack.buildHexStringPacket());
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  bool currentPinState = digitalRead(PC8);
+  bool currentPinState = digitalRead(SIGNAL_MONITOR_PIN);
   if(currentPinState != lastPinState)
   {
     timeClient.update();
     if (timeClient.updated())
     {
-      uint8_t data[TIME_TO_BYTE_ARRAY_LEN + SLOPE_BYTE + TYPE_BYTE];
-      data[0] = TRIGGER_BYTE;
+      uint8_t data[DATA_BYTE_LENGTH];
+      data[TYPE_BYTE_POSITION] = TRIGGER_BYTE;
       getTimeStampAsByteArray(&timeClient, data);
 
       if(currentPinState == HIGH) data[LAST_DATA_BYTE] = RISING_SLOPE;

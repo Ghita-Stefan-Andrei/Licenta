@@ -14,7 +14,7 @@ class InterpretPacket:
             retStatus = 1
             length = 2 * (int(dataLenByte, 16) + 1)
         else:
-            retHeader, retStatus, length = "", 0, 0
+            retHeader, retStatus, length = "", -1, 0
 
         return retHeader, retStatus, length
     
@@ -41,7 +41,7 @@ class InterpretPacket:
         if self.individualBytes[2] == int('AB', 16):
             decodedData = self.decodeTriggerPacket(packet)
         elif self.individualBytes[2] == int('AC', 16):
-            decodedData = 'Board booted up'
+            decodedData = f'Board booted up\nPacket: {packet}\n'
         
         return decodedData
         
