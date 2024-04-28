@@ -108,9 +108,12 @@ def getSerialSettings(consoleXfile, filePath):
     elif consoleXfile == 'file':
         #basePath = os.path.dirname(__file__)
         #filePath = os.path.join(basePath[:-3], 'serialSettings.txt')
-        with open(filePath, 'r') as file:
-            line = file.readline().strip().split(',')
-            com, bitRate = line
+        try:
+            with open(filePath, 'r') as file:
+                line = file.readline().strip().split(',')
+                com, bitRate = line
+        except Exception as e:
+            print("Error: Incorrect or missing serial settings file path")
     else:
         print('Invalid method.')
     return com, bitRate
