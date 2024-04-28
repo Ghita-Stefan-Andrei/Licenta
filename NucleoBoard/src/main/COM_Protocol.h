@@ -12,7 +12,7 @@
 #define TRIGGER_BYTE  0xAB
 #define BOOT_BYTE     0xAC
 
-#define TIME_TO_BYTE_ARRAY_LEN  6                                                //number of time data bytes
+#define TIME_TO_BYTE_ARRAY_LEN  8                                                //number of time data bytes
 #define SLOPE_BYTE              1                                                //number of slope data bytes
 #define TYPE_BYTE               1   
 #define TYPE_BYTE_POSITION      0                                                //number of packet type data bytes

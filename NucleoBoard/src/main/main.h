@@ -46,10 +46,14 @@ void initEthernet()
 
 void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data)
 {
+  uint16_t milisecs = timeClient->getEpochMillis() % 1000;
+
   data[BYTES_BEFORE_TIME_DATA + 0] = timeClient->getYear() - 2000; //to get a value to fit in an uint8_t assuming this code wont be used after the year 2255
   data[BYTES_BEFORE_TIME_DATA + 1] = timeClient->getMonth();
   data[BYTES_BEFORE_TIME_DATA + 2] = timeClient->getDay();
   data[BYTES_BEFORE_TIME_DATA + 3] = timeClient->getHours();
   data[BYTES_BEFORE_TIME_DATA + 4] = timeClient->getMinutes();
   data[BYTES_BEFORE_TIME_DATA + 5] = timeClient->getSeconds();
+  data[BYTES_BEFORE_TIME_DATA + 6] = milisecs / 100;
+  data[BYTES_BEFORE_TIME_DATA + 7] = milisecs % 100; 
 }

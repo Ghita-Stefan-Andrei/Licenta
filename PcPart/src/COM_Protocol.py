@@ -15,14 +15,17 @@ class ByteDex:
     HEADER_LENGTH            = 4 #bytes read from serial
     TYPE_BYTE_POSITION       = 2
     TIME_FIRST_BYTE_POSITION = 3
-    SLOPE_BYTE_POSITION      = TIME_FIRST_BYTE_POSITION + 6
+    TOTAL_TIME_BYTES         = 8
+    SLOPE_BYTE_POSITION      = TIME_FIRST_BYTE_POSITION + TOTAL_TIME_BYTES
 
-    YEAR_OFFSET   = 0
-    MONTH_OFFSET  = 1
-    DAY_OFFSET    = 2
-    HOUR_OFFSET   = 3
-    MINUTE_OFFSET = 4
-    SECOND_OFFSET = 5
+    YEAR_OFFSET    = 0
+    MONTH_OFFSET   = 1
+    DAY_OFFSET     = 2
+    HOUR_OFFSET    = 3
+    MINUTE_OFFSET  = 4
+    SECOND_OFFSET  = 5
+    MILS_FH_OFFSET = 6 #FIRST  HALF OF THE NUMBER OF MILISECONDS
+    MILS_SH_OFFSET = 7 #SECOND HALF OF THE NUMBER OF MILISECONDS
 
     START_BYTE    = 0xAA
     TRIGGER_BYTE  = 0xAB
@@ -32,6 +35,7 @@ class ByteDex:
 
 class Format:
     TIME_DISPLAY_FORMAT = '0>2'
+    TIME_MS_DISPLAY_FORMAT = '0>3'
     YEAR_OFFSET = 2000
 
 class InterpretPacket:
@@ -64,7 +68,9 @@ class InterpretPacket:
         day    = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.DAY_OFFSET]
         hour   = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.HOUR_OFFSET]
         minute = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.MINUTE_OFFSET]
-        second = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.SECOND_OFFSET] 
+        second = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.SECOND_OFFSET]
+        milsFH = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.MILS_FH_OFFSET] 
+        milsSH = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.MILS_SH_OFFSET] 
 
         slope = (
                 'Rising Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
@@ -75,7 +81,8 @@ class InterpretPacket:
         return (
                 f"Change detected at {hour:{Format.TIME_DISPLAY_FORMAT}}:"
                 f"{minute:{Format.TIME_DISPLAY_FORMAT}}:"
-                f"{second:{Format.TIME_DISPLAY_FORMAT}} on "
+                f"{second:{Format.TIME_DISPLAY_FORMAT}}:"
+                f"{milsFH * 100 + milsSH:{Format.TIME_MS_DISPLAY_FORMAT}} on "
                 f"{day:{Format.TIME_DISPLAY_FORMAT}}/"
                 f"{month:{Format.TIME_DISPLAY_FORMAT}}/"
                 f"{year}\n"

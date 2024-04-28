@@ -8,7 +8,6 @@ bool lastPinState = LOW;
 void setup() {
   Serial.begin(115200);
   while (!Serial && millis() < 5000);
-
   // Ethernet Set Up //
   /*Serial.print(F("\nStart Ethernet_NTPClient_Basic_STM32 on ")); Serial.print(BOARD_NAME);
   Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
