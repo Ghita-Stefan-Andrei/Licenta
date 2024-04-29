@@ -12,7 +12,41 @@ class Packet
     uint8_t  dataSize;
     uint8_t* buildPacket;
     char*    builtPacket;
-    
+
+  private:
+    /**
+      * @brief Creează un pachet de trigger cu datele de timp și informații despre panta.
+      * 
+      * Această funcție inițializează array-ul de date pentru pachet, stabilește dimensiunea acestuia,
+      * plasează un tip predefinit de pachet de trigger în poziția de byte type specificată,
+      * copiază datele de timp furnizate începând de la o poziție de byte specifică după byte type,
+      * și setează byte-ul pantei ca ultim byte de date al pachetului.
+      *
+      * @param timeData Pointer către array-ul care conține datele de timp.
+      * @param slopeByte Byte-ul care reprezintă informația despre pantă.
+      */
+    void createTriggerPacket(uint8_t* dataByteArr, uint8_t extraByte);
+
+    /**
+      * @brief Creează un pachet de boot.
+      * 
+      * Această funcție alocă memoria pentru pachetul de boot, stabilește dimensiunea acestuia,
+      * și atribuie tipul de pachet de boot la poziția byte-ului de tip.
+      */
+    void createBootPacket();
+
+    /**
+      * @brief Creează un pachet de stare Ethernet cu adresa IP și starea conexiunii.
+      * 
+      * Această funcție inițializează array-ul de date pentru pachetul Ethernet, stabilește dimensiunea acestuia,
+      * atribuie tipul de pachet de stare Ethernet în poziția predefinită, copiază adresa IP furnizată
+      * în pachet și setează starea conexiunii Ethernet ca ultim byte al pachetului.
+      *
+      * @param ipAdress Pointer către array-ul care conține adresa IP.
+      * @param ethStatus Starea conexiunii Ethernet (conectat sau neconectat).
+      */
+    void createEthernetPacket(uint8_t* dataByteArr, uint8_t extraByte);
+
   public:
     /**
       * @brief Constructor pentru clasa Packet.
@@ -28,6 +62,17 @@ class Packet
       */
     Packet(const uint8_t* data, uint8_t length);
     
+    /**
+      * @brief Constructor pentru crearea tipurilor specifice de pachete bazate pe parametrii de intrare.
+      * 
+      * Acest constructor setează byte-ul de început și inițiază crearea pachetului pe baza
+      * tipului de pachet furnizat (de exemplu, trigger, boot sau Ethernet). De asemenea, calculează checksum-ul
+      * pentru pachetul creat.
+      *
+      * @param packetType Tipul de pachet care urmează să fie creat.
+      * @param dataByteArr Pointer către un array de bytes de date utilizat pentru crearea pachetului (variază în funcție de tipul pachetului).
+      * @param extraByte Un byte extra utilizat în unele tipuri de pachete pentru a transmite informații suplimentare (precum tipul pantei pt pachete trigger, sau statusul conexiunii ethernet pt pachete ethernet).
+      */
     Packet(const uint8_t packetType, uint8_t* dataByteArr = nullptr, uint8_t extraByte = 0x00);
 
     /**

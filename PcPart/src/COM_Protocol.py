@@ -145,8 +145,6 @@ def getSerialSettings(consoleXfile, filePath):
 
         bitRate = int(input('Insert bit rate:'))
     elif consoleXfile == 'file':
-        #basePath = os.path.dirname(__file__)
-        #filePath = os.path.join(basePath[:-3], 'serialSettings.txt')
         try:
             with open(filePath, 'r') as file:
                 line = file.readline().strip().split(',')
