@@ -47,6 +47,19 @@ class Packet
       */
     void createEthernetPacket(uint8_t* dataByteArr, uint8_t extraByte);
 
+    /**
+      * @brief Calculează suma de control pentru pachet.
+      * 
+      * Inițializează suma de control cu valoarea startByte, apoi aplică XOR între suma de control 
+      * curentă și fiecare octet de date din pachet, actualizând suma de control.
+      * 
+      * Această metodă actualizează membrul 'checkSum' al clasei.
+      *
+      * @note Această metodă nu are parametri de intrare și nu returnează o valoare, ci
+      *       doar actualizează starea internă a obiectului Packet.
+      */
+    void calculateCheckSum();
+
   public:
     /**
       * @brief Constructor pentru clasa Packet.
@@ -74,19 +87,6 @@ class Packet
       * @param extraByte Un byte extra utilizat în unele tipuri de pachete pentru a transmite informații suplimentare (precum tipul pantei pt pachete trigger, sau statusul conexiunii ethernet pt pachete ethernet).
       */
     Packet(const uint8_t packetType, uint8_t* dataByteArr = nullptr, uint8_t extraByte = 0x00);
-
-    /**
-      * @brief Calculează suma de control pentru pachet.
-      * 
-      * Inițializează suma de control cu valoarea startByte, apoi aplică XOR între suma de control 
-      * curentă și fiecare octet de date din pachet, actualizând suma de control.
-      * 
-      * Această metodă actualizează membrul 'checkSum' al clasei.
-      *
-      * @note Această metodă nu are parametri de intrare și nu returnează o valoare, ci
-      *       doar actualizează starea internă a obiectului Packet.
-      */
-    void calculateCheckSum();
 
     /**
       * @brief Construiește și returnează un pachet de date sub formă de șir de caractere hexazecimale.
