@@ -9,6 +9,46 @@ Packet::Packet(const uint8_t* data, uint8_t length)
     this->calculateCheckSum();
 }
 
+Packet::Packet(const uint8_t packetType, uint8_t* dataByteArr, uint8_t extraByte)
+{
+    this->startByte = START_BYTE;
+    switch(packetType)
+    {
+        case TRIGGER_TYPE:
+        {
+            this->dataBytes = new uint8_t[DATA_BYTE_LENGTH_TRIG];
+            this->dataSize = DATA_BYTE_LENGTH_TRIG;
+            this->dataBytes[TYPE_BYTE_POSITION] = TRIGGER_TYPE;
+            for (uint8_t timeDataIndex = 0; timeDataIndex < TIME_TO_BYTE_ARRAY_LEN; timeDataIndex++)
+            {
+                this->dataBytes[BYTES_BEFORE_TIME_DATA + timeDataIndex] = dataByteArr[timeDataIndex];
+            }
+            this->dataBytes[LAST_DATA_BYTE_TRIG] = extraByte;
+            break;
+        }
+        case BOOT_TYPE:
+        {
+            this->dataBytes = new uint8_t[TYPE_BYTE];
+            this->dataSize = TYPE_BYTE;
+            this->dataBytes[TYPE_BYTE_POSITION] = BOOT_TYPE;
+            break;
+        }
+        case ETHERNET_STATUS_TYPE:
+        {
+            this->dataBytes = new uint8_t[DATA_BYTE_LENGTH_ETH];
+            this->dataSize = DATA_BYTE_LENGTH_ETH;
+            this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_TYPE;
+            for (uint8_t ipByte = 0; ipByte < IP_BYTE_LENGTH; ipByte++)
+            {
+                this->dataBytes[BYTES_BEFORE_IP + ipByte] = dataByteArr[ipByte];
+            }
+            this->dataBytes[LAST_DATA_BYTE_ETH] = (extraByte == ETH_CONNECTED) ? ETH_CONNECTED : ETH_NOT_CONNECTED;
+            break;
+        }
+    }
+    this->calculateCheckSum();
+}
+
 void Packet::calculateCheckSum()
 {
     this->checkSum = this->startByte ^ this->dataSize;
@@ -20,7 +60,7 @@ void Packet::calculateCheckSum()
 
 char* Packet::buildHexStringPacket()
 {
-	const char hexDigits[] = "0123456789ABCDEF";
+  const char hexDigits[] = "0123456789ABCDEF";
 
   uint8_t buildPacketSize = this->dataSize + EXTRA_BYTES;
   this->buildPacket = new uint8_t[buildPacketSize];

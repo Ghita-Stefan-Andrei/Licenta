@@ -18,20 +18,32 @@ class ByteDex:
     TOTAL_TIME_BYTES         = 8
     SLOPE_BYTE_POSITION      = TIME_FIRST_BYTE_POSITION + TOTAL_TIME_BYTES
 
-    YEAR_OFFSET    = 0
-    MONTH_OFFSET   = 1
-    DAY_OFFSET     = 2
-    HOUR_OFFSET    = 3
-    MINUTE_OFFSET  = 4
-    SECOND_OFFSET  = 5
-    MILS_FH_OFFSET = 6 #FIRST  HALF OF THE NUMBER OF MILISECONDS
-    MILS_SH_OFFSET = 7 #SECOND HALF OF THE NUMBER OF MILISECONDS
+    YEAR    = TIME_FIRST_BYTE_POSITION + 0
+    MONTH   = TIME_FIRST_BYTE_POSITION + 1
+    DAY     = TIME_FIRST_BYTE_POSITION + 2
+    HOUR    = TIME_FIRST_BYTE_POSITION + 3
+    MINUTE  = TIME_FIRST_BYTE_POSITION + 4
+    SECOND  = TIME_FIRST_BYTE_POSITION + 5
+    MILS_FH = TIME_FIRST_BYTE_POSITION + 6 #FIRST  HALF OF THE NUMBER OF MILISECONDS
+    MILS_SH = TIME_FIRST_BYTE_POSITION + 7 #SECOND HALF OF THE NUMBER OF MILISECONDS
 
-    START_BYTE    = 0xAA
-    TRIGGER_BYTE  = 0xAB
-    BOOT_BYTE     = 0xAC
-    RISING_SLOPE  = 0x01
-    FALLING_SLOPE = 0x10
+    START_BYTE           = 0xAA
+    TRIGGER_BYTE         = 0xAB
+    BOOT_BYTE            = 0xAC
+    ETHERNET_STATUS_BYTE = 0xAD
+
+    RISING_SLOPE         = 0x01
+    FALLING_SLOPE        = 0x10
+
+    NOT_CONNECTED          = 0     
+    CONNECTED              = 1
+    IP_FIRST_BYTE_POSITION = 3
+    TOTAL_IP_BYTES         = 4
+    IP_FIRST_BYTE          = IP_FIRST_BYTE_POSITION + 0
+    IP_SECOND_BYTE         = IP_FIRST_BYTE_POSITION + 1
+    IP_THIRD_BYTE          = IP_FIRST_BYTE_POSITION + 2
+    IP_FORTH_BYTE          = IP_FIRST_BYTE_POSITION + 3
+    ETHERNET_STATUS_POS    = IP_FIRST_BYTE_POSITION + TOTAL_IP_BYTES 
 
 class Format:
     TIME_DISPLAY_FORMAT = '0>2'
@@ -62,15 +74,29 @@ class InterpretPacket:
         if reduce(lambda x, y: x ^ y, self.individualBytes) != 0: return StatusLog.INVALID_CHECK_SUM #checkSum
         return StatusLog.VALID_CHECK_SUM
 
+    def decodeEthPacket(self, packet):
+        ethStatus = self.individualBytes[ByteDex.ETHERNET_STATUS_POS]
+
+        if ethStatus == ByteDex.NOT_CONNECTED: return f"No internet connection found.\nPacket: {packet}\n"
+
+        if ethStatus == ByteDex.CONNECTED:
+            ipFirstByte  = self.individualBytes[ByteDex.IP_FIRST_BYTE]
+            ipSecondByte = self.individualBytes[ByteDex.IP_SECOND_BYTE]
+            ipThirdByte  = self.individualBytes[ByteDex.IP_THIRD_BYTE]
+            ipForthByte  = self.individualBytes[ByteDex.IP_FORTH_BYTE]
+
+            return f"Connected to internet.\nIP:{ipFirstByte}.{ipSecondByte}.{ipThirdByte}.{ipForthByte}\nPacket: {packet}\n"
+
+
     def decodeTriggerPacket(self, packet):
-        year   = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.YEAR_OFFSET] + Format.YEAR_OFFSET;
-        month  = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.MONTH_OFFSET]
-        day    = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.DAY_OFFSET]
-        hour   = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.HOUR_OFFSET]
-        minute = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.MINUTE_OFFSET]
-        second = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.SECOND_OFFSET]
-        milsFH = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.MILS_FH_OFFSET] 
-        milsSH = self.individualBytes[ByteDex.TIME_FIRST_BYTE_POSITION + ByteDex.MILS_SH_OFFSET] 
+        year   = self.individualBytes[ByteDex.YEAR] + Format.YEAR_OFFSET;
+        month  = self.individualBytes[ByteDex.MONTH]
+        day    = self.individualBytes[ByteDex.DAY]
+        hour   = self.individualBytes[ByteDex.HOUR]
+        minute = self.individualBytes[ByteDex.MINUTE]
+        second = self.individualBytes[ByteDex.SECOND]
+        milsFH = self.individualBytes[ByteDex.MILS_FH] 
+        milsSH = self.individualBytes[ByteDex.MILS_SH] 
 
         slope = (
                 'Rising Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
@@ -97,6 +123,12 @@ class InterpretPacket:
 
         elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.BOOT_BYTE:
             decodedData = f'Board booted up\nPacket: {packet}\n'
+        
+        elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.ETHERNET_STATUS_BYTE:
+            decodedData = self.decodeEthPacket(packet)
+
+        else:
+            decodedData = f"Unknown packet type: {hex(self.individualBytes[ByteDex.TYPE_BYTE_POSITION])[2:].upper()}"
         
         return decodedData
 

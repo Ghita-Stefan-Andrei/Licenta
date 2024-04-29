@@ -8,7 +8,7 @@
             "name": "Python Debugger: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "C:\\Users\\Asus\\Desktop\\ProiectLicenta\\PcPart\\src\\main.py",
             "args": ["--source", "file",
                      "--filePath", "C:\\Users\\Asus\\Desktop\\ProiectLicenta\\PcPart\\serialSettings.txt"],
             "console": "integratedTerminal"

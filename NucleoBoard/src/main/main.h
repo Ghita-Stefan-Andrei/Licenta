@@ -1,12 +1,18 @@
 #pragma once
 #include "defines.h"
-#include <NTPClient_Generic.h>
 #include "COM_Protocol.h"
+#include <NTPClient_Generic.h>
 
 #define SIGNAL_MONITOR_PIN PC8
 #define TIME_ZONE_OFFSET_HRS (3)
 
-void initEthernet()
+typedef struct
+{
+  bool status;
+  uint32_t ip;
+}ethInfo;
+
+ethInfo initEthernet()
 {
 #if !(USE_BUILTIN_ETHERNET || USE_UIP_ETHERNET)
 
@@ -37,8 +43,11 @@ void initEthernet()
   uint16_t index = millis() % NUMBER_OF_MAC;
   // Use Static IP
   //Ethernet.begin(mac[index], ip);
-  Ethernet.begin(mac[index]);
-
+  bool status = Ethernet.begin(mac[index]);
+  ethInfo toRet;
+  toRet.status = status;
+  toRet.ip = Ethernet.localIP();
+  return toRet;
   // you're connected now, so print out the data
   //Serial.print(F("You're connected to the network, IP = "));
   //Serial.println(Ethernet.localIP());  
@@ -48,12 +57,20 @@ void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data)
 {
   uint16_t milisecs = timeClient->getEpochMillis() % 1000;
 
-  data[BYTES_BEFORE_TIME_DATA + 0] = timeClient->getYear() - 2000; //to get a value to fit in an uint8_t assuming this code wont be used after the year 2255
-  data[BYTES_BEFORE_TIME_DATA + 1] = timeClient->getMonth();
-  data[BYTES_BEFORE_TIME_DATA + 2] = timeClient->getDay();
-  data[BYTES_BEFORE_TIME_DATA + 3] = timeClient->getHours();
-  data[BYTES_BEFORE_TIME_DATA + 4] = timeClient->getMinutes();
-  data[BYTES_BEFORE_TIME_DATA + 5] = timeClient->getSeconds();
-  data[BYTES_BEFORE_TIME_DATA + 6] = milisecs / 100;
-  data[BYTES_BEFORE_TIME_DATA + 7] = milisecs % 100; 
+  data[0] = timeClient->getYear() - 2000; //to get a value to fit in an uint8_t assuming this code wont be used after the year 2255
+  data[1] = timeClient->getMonth();
+  data[2] = timeClient->getDay();
+  data[3] = timeClient->getHours();
+  data[4] = timeClient->getMinutes();
+  data[5] = timeClient->getSeconds();
+  data[6] = milisecs / 100;
+  data[7] = milisecs % 100; 
+}
+
+void decodeIP(uint8_t* IP, uint32_t rawIP)
+{
+  IP[0] = (rawIP >>  0) & 0x000000FF;
+  IP[1] = (rawIP >>  8) & 0x000000FF;
+  IP[2] = (rawIP >> 16) & 0x000000FF;
+  IP[3] = (rawIP >> 24) & 0x000000FF;
 }

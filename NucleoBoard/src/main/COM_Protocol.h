@@ -1,25 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <cstring>
-
-#define START_BYTE    0xAA
-#define RISING_SLOPE  0x01
-#define FALLING_SLOPE 0x10
-#define EXTRA_BYTES   (uint8_t)3
-#define PACKET_OFFSET EXTRA_BYTES - 1
-#define FIRST_BYTE    0
-#define SECOND_BYTE   1
-#define TRIGGER_BYTE  0xAB
-#define BOOT_BYTE     0xAC
-
-#define TIME_TO_BYTE_ARRAY_LEN  8                                                //number of time data bytes
-#define SLOPE_BYTE              1                                                //number of slope data bytes
-#define TYPE_BYTE               1   
-#define TYPE_BYTE_POSITION      0                                                //number of packet type data bytes
-#define BYTES_BEFORE_TIME_DATA  TYPE_BYTE                                        //number of bytes before time data bytes
-#define DATA_BYTE_LENGTH        TYPE_BYTE + TIME_TO_BYTE_ARRAY_LEN + SLOPE_BYTE  //total number of data bytes (type + time + slope)
-#define LAST_DATA_BYTE          DATA_BYTE_LENGTH - 1
-#define SLOPE_BYTE_POSITION     LAST_DATA_BYTE
+#include "COM_Protocol_Defines.h"
 
 class Packet
 {
@@ -46,6 +28,8 @@ class Packet
       */
     Packet(const uint8_t* data, uint8_t length);
     
+    Packet(const uint8_t packetType, uint8_t* dataByteArr = nullptr, uint8_t extraByte = 0x00);
+
     /**
       * @brief Calculează suma de control pentru pachet.
       * 
