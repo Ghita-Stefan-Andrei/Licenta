@@ -18,7 +18,7 @@ void Packet::createTriggerPacket(uint8_t* timeData, uint8_t slopeByte)
     {
         this->dataBytes[BYTES_BEFORE_TIME_DATA + timeDataIndex] = timeData[timeDataIndex];
     }
-    this->dataBytes[LAST_DATA_BYTE_TRIG] = slopeByte;
+    this->dataBytes[SLOPE_BYTE_POSITION] = slopeByte;
 }
 
 void Packet::createBootPacket()
@@ -37,7 +37,7 @@ void Packet::createEthernetPacket(uint8_t* ipAdress, uint8_t ethStatus)
     {
         this->dataBytes[BYTES_BEFORE_IP + ipByte] = ipAdress[ipByte];
     }
-    this->dataBytes[LAST_DATA_BYTE_ETH] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : ETH_NOT_CONNECTED;
+    this->dataBytes[ETH_STATUS_BYTE_POS] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : ETH_NOT_CONNECTED;
 }
 
 Packet::Packet(const uint8_t packetType, uint8_t* dataByteArr, uint8_t extraByte)
