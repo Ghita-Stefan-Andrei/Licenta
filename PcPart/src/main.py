@@ -18,7 +18,6 @@ decoder = InP()
 ser = serial.Serial(com, bitRate)
 print(f'Serial configured on {com} with {bitRate} bitrate.')
 print('Listening...')
-#ser = serial.Serial('COM3', 115200)
 
 while True:
     header = ser.read(ByteDex.HEADER_LENGTH).decode('utf-8')
