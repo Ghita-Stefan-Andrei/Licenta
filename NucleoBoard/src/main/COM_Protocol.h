@@ -45,7 +45,7 @@ class Packet
       * @param ipAdress Pointer către array-ul care conține adresa IP.
       * @param ethStatus Starea conexiunii Ethernet (conectat sau neconectat).
       */
-    void createEthernetPacket(uint8_t* dataByteArr, uint8_t extraByte);
+    void createEthernetPacket(uint8_t* dataByteArr, uint8_t extraByte, uint8_t type);
 
     /**
       * @brief Calculează suma de control pentru pachet.

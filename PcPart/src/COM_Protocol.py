@@ -69,7 +69,18 @@ class InterpretPacket:
                 f"Slope type: {slope}\n"
                 f"Packet: {packet}\n"
                )
-
+    
+    def decodeEthCheckPacket(self, packet):
+        status = ''
+        if self.individualBytes[ByteDex.ETHERNET_CHECK_POS] == ByteDex.CONNECTED:
+            status = 'Connected to ethernet\n'
+        elif  self.individualBytes[ByteDex.ETHERNET_CHECK_POS] == ByteDex.NOT_CONNECTED:
+            status = 'Disconnected from ethernet\n'
+        else:
+            status = 'Unknown\n'
+        
+        return status
+        
     def decodePacket(self, packet):
         decodedData = ''
         if self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.TRIGGER_BYTE:
@@ -80,6 +91,9 @@ class InterpretPacket:
         
         elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.ETHERNET_STATUS_BYTE:
             decodedData = self.decodeEthPacket(packet)
+
+        elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.ETHERNET_STATUS_CHECK:
+            decodedData = self.decodeEthCheckPacket(packet)
 
         else:
             decodedData = f"Unknown packet type: {hex(self.individualBytes[ByteDex.TYPE_BYTE_POSITION])[2:].upper()}"

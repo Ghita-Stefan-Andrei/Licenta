@@ -24,13 +24,14 @@ class ByteDex:
     MILS_FH = TIME_FIRST_BYTE_POSITION + 6 #FIRST  HALF OF THE NUMBER OF MILISECONDS
     MILS_SH = TIME_FIRST_BYTE_POSITION + 7 #SECOND HALF OF THE NUMBER OF MILISECONDS
 
-    START_BYTE           = 0xAA
-    TRIGGER_BYTE         = 0xAB
-    BOOT_BYTE            = 0xAC
-    ETHERNET_STATUS_BYTE = 0xAD
+    START_BYTE             = 0xAA
+    TRIGGER_BYTE           = 0xAB
+    BOOT_BYTE              = 0xAC
+    ETHERNET_STATUS_BYTE   = 0xAD
+    ETHERNET_STATUS_CHECK  = 0xAE
 
-    RISING_SLOPE         = 0x01
-    FALLING_SLOPE        = 0x10
+    RISING_SLOPE           = 0x01
+    FALLING_SLOPE          = 0x10
 
     NOT_CONNECTED          = 0     
     CONNECTED              = 1
@@ -41,6 +42,7 @@ class ByteDex:
     IP_THIRD_BYTE          = IP_FIRST_BYTE_POSITION + 2
     IP_FORTH_BYTE          = IP_FIRST_BYTE_POSITION + 3
     ETHERNET_STATUS_POS    = IP_FIRST_BYTE_POSITION + TOTAL_IP_BYTES 
+    ETHERNET_CHECK_POS     = 3
 
 class Format:
     TIME_DISPLAY_FORMAT = '0>2'

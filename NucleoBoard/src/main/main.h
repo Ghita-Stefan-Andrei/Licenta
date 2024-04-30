@@ -41,16 +41,14 @@ ethInfo initEthernet()
   // start the ethernet connection and the server:
   // Use DHCP dynamic IP and random mac
   uint16_t index = millis() % NUMBER_OF_MAC;
-  // Use Static IP
-  //Ethernet.begin(mac[index], ip);
+  
   bool status = Ethernet.begin(mac[index]);
+
   ethInfo toRet;
   toRet.status = status;
   toRet.ip = Ethernet.localIP();
+  
   return toRet;
-  // you're connected now, so print out the data
-  //Serial.print(F("You're connected to the network, IP = "));
-  //Serial.println(Ethernet.localIP());  
 }
 
 void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data, uint32_t serverResponseTime)

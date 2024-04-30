@@ -28,16 +28,27 @@ void Packet::createBootPacket()
     this->dataBytes[TYPE_BYTE_POSITION] = BOOT_TYPE;
 }
 
-void Packet::createEthernetPacket(uint8_t* ipAdress, uint8_t ethStatus)
+void Packet::createEthernetPacket(uint8_t* ipAdress, uint8_t ethStatus, uint8_t type)
 {
-    this->dataBytes = new uint8_t[DATA_BYTE_LENGTH_ETH];
-    this->dataSize = DATA_BYTE_LENGTH_ETH;
-    this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_TYPE;
-    for (uint8_t ipByte = 0; ipByte < IP_BYTE_LENGTH; ipByte++)
+    if(type == ETHERNET_STATUS_TYPE)
     {
-        this->dataBytes[BYTES_BEFORE_IP + ipByte] = ipAdress[ipByte];
+        this->dataBytes = new uint8_t[DATA_BYTE_LENGTH_ETH];
+        this->dataSize = DATA_BYTE_LENGTH_ETH;
+        this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_TYPE;
+        for (uint8_t ipByte = 0; ipByte < IP_BYTE_LENGTH; ipByte++)
+        {
+            this->dataBytes[BYTES_BEFORE_IP + ipByte] = ipAdress[ipByte];
+        }
+        this->dataBytes[ETH_STATUS_BYTE_POS] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : ETH_NOT_CONNECTED;
     }
-    this->dataBytes[ETH_STATUS_BYTE_POS] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : ETH_NOT_CONNECTED;
+    else if (type == ETHERNET_STATUS_CHECK_T)
+    {
+        this->dataBytes = new uint8_t[DATA_BYTE_LENGTH_ETH_C];
+        this->dataSize = DATA_BYTE_LENGTH_ETH_C;
+        this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_CHECK_T;
+        this->dataBytes[ETH_STATUS_BYTE_POS_C] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : (ethStatus == ETH_CONNECTION_OFF) ? ETH_NOT_CONNECTED : ETH_CONNECTION_UNKNOWN;
+    }
+
 }
 
 Packet::Packet(const uint8_t packetType, uint8_t* dataByteArr, uint8_t extraByte)
@@ -45,9 +56,11 @@ Packet::Packet(const uint8_t packetType, uint8_t* dataByteArr, uint8_t extraByte
     this->startByte = START_BYTE;
     switch(packetType)
     {
-        case TRIGGER_TYPE:         createTriggerPacket(dataByteArr, extraByte); break;
-        case BOOT_TYPE:            createBootPacket(); break;
-        case ETHERNET_STATUS_TYPE: createEthernetPacket(dataByteArr, extraByte); break;
+        case TRIGGER_TYPE:            createTriggerPacket(dataByteArr, extraByte); break;
+        case BOOT_TYPE:               createBootPacket(); break;
+        case ETHERNET_STATUS_TYPE:    createEthernetPacket(dataByteArr, extraByte, packetType); break;
+        case ETHERNET_STATUS_CHECK_T: createEthernetPacket(dataByteArr, extraByte, packetType); break;
+        default: break;
     }
     this->calculateCheckSum();
 }
