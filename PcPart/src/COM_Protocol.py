@@ -73,11 +73,11 @@ class InterpretPacket:
     def decodeEthCheckPacket(self, packet):
         status = ''
         if self.individualBytes[ByteDex.ETHERNET_CHECK_POS] == ByteDex.CONNECTED:
-            status = 'Connected to ethernet\nPacket: {packet}\n'
+            status = f'Connected to ethernet\nPacket: {packet}\n'
         elif  self.individualBytes[ByteDex.ETHERNET_CHECK_POS] == ByteDex.NOT_CONNECTED:
-            status = 'Disconnected from ethernet\nPacket: {packet}\n'
+            status = f'Disconnected from ethernet\nPacket: {packet}\n'
         else:
-            status = 'Unknown\nPacket: {packet}\n'
+            status = f'Unknown\nPacket: {packet}\n'
         
         return status
         
