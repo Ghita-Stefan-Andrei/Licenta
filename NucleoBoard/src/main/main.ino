@@ -70,11 +70,11 @@ void loop() {
     }
   }
   lastPinState = currentPinState;
-
+  
   EthernetLinkStatus status = Ethernet.linkStatus();
   if (status != lastEthStatus)
   {
-    Packet checkEth(ETHERNET_STATUS_CHECK_T, {}, status);
+    Packet checkEth(ETHERNET_STATUS_CHECK_T, NO_DATA, status);
     Serial.print(checkEth.buildHexStringPacket());
   }
   lastEthStatus = status;

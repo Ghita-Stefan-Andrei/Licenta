@@ -73,11 +73,11 @@ class InterpretPacket:
     def decodeEthCheckPacket(self, packet):
         status = ''
         if self.individualBytes[ByteDex.ETHERNET_CHECK_POS] == ByteDex.CONNECTED:
-            status = 'Connected to ethernet\n'
+            status = 'Connected to ethernet\nPacket: {packet}\n'
         elif  self.individualBytes[ByteDex.ETHERNET_CHECK_POS] == ByteDex.NOT_CONNECTED:
-            status = 'Disconnected from ethernet\n'
+            status = 'Disconnected from ethernet\nPacket: {packet}\n'
         else:
-            status = 'Unknown\n'
+            status = 'Unknown\nPacket: {packet}\n'
         
         return status
         
@@ -104,12 +104,12 @@ def getSerialSettings(consoleXfile, filePath):
     com, bitRate = '', 0
     if consoleXfile == 'keyboard':
         while True:
-            comIn = input("Enter com number (COMx): ").upper()
-            if re.match(r'^COM\d+$', comIn):
+            comIn = input("Enter com number: ")
+            if comIn.isdigit():
                 com = comIn
                 break
             else:
-                print("Input doesn't respect the COMx format.")
+                print("Input is not a valid number.")
 
         bitRate = int(input('Insert bit rate:'))
     elif consoleXfile == 'file':
@@ -121,4 +121,4 @@ def getSerialSettings(consoleXfile, filePath):
             print("Error: Incorrect or missing serial settings file path")
     else:
         print('Invalid method.')
-    return com, bitRate
+    return f"COM{com}", bitRate
