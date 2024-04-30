@@ -6,8 +6,12 @@ NTPClient timeClient(ntpUDP);
 bool lastPinState = LOW;
 
 void setup() {
+  pinMode(LED_RED, OUTPUT);    //while the RED led is on the board is in setup, once it closes and the BLUE led lights up the board enters the loop
+  digitalWrite(LED_RED, HIGH);
+
   Serial.begin(115200);
   while (!Serial && millis() < 5000);
+
   Packet bootPack(BOOT_TYPE);
   Serial.print(bootPack.buildHexStringPacket());
 
@@ -41,6 +45,7 @@ void setup() {
 
   pinMode(LED_BLUE, OUTPUT);
   digitalWrite(LED_BLUE, HIGH);
+  digitalWrite(LED_RED, LOW);
 }
 
 // the loop function runs over and over again forever
