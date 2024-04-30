@@ -53,9 +53,9 @@ ethInfo initEthernet()
   //Serial.println(Ethernet.localIP());  
 }
 
-void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data)
+void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data, uint32_t serverResponseTime)
 {
-  uint16_t milisecs = timeClient->getEpochMillis() % 1000;
+  uint16_t milisecs = (timeClient->getEpochMillis() - serverResponseTime) % 1000;
 
   data[0] = timeClient->getYear() - 2000; //to get a value to fit in an uint8_t assuming this code wont be used after the year 2255
   data[1] = timeClient->getMonth();

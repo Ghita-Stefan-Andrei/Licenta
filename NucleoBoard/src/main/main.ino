@@ -15,12 +15,6 @@ void setup() {
   Packet bootPack(BOOT_TYPE);
   Serial.print(bootPack.buildHexStringPacket());
 
-  // Ethernet Set Up //
-  /*Serial.print(F("\nStart Ethernet_NTPClient_Basic_STM32 on ")); Serial.print(BOARD_NAME);
-  Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
-  Serial.println(ETHERNET_WEBSERVER_STM32_VERSION);
-  Serial.println(NTPCLIENT_GENERIC_VERSION);*/
-
   ethInfo ethInfoStatus = initEthernet();
 
   uint8_t ip[IP_BYTE_LENGTH];
@@ -37,7 +31,6 @@ void setup() {
   // default 60000 => 60s. Set to once per hour
   timeClient.setUpdateInterval(SECS_IN_HR);
   
-  //Serial.println("Using NTP Server " + timeClient.getPoolServerName());
   // End Time Client //
 
   pinMode(SIGNAL_MONITOR_PIN, INPUT);
@@ -53,13 +46,18 @@ void loop() {
   bool currentPinState = digitalRead(SIGNAL_MONITOR_PIN);
   if(currentPinState != lastPinState)
   {
+    uint32_t serverResponseDelay1 = millis();
     timeClient.update();
+    uint32_t serverResponseDelay2 = millis();
+
+    uint32_t serverResponseTime = serverResponseDelay2 - serverResponseDelay1;
+
     if (timeClient.updated())
     {
       uint8_t slopeType = 0x00;
       uint8_t timeData[TIME_TO_BYTE_ARRAY_LEN];
 
-      getTimeStampAsByteArray(&timeClient, timeData);
+      getTimeStampAsByteArray(&timeClient, timeData, serverResponseTime);
 
       if(currentPinState == HIGH) slopeType = RISING_SLOPE;
       if(currentPinState == LOW)  slopeType = FALLING_SLOPE;
