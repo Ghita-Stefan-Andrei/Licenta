@@ -37,3 +37,5 @@
 #define ETH_STATUS_BYTE_POS_C   DATA_BYTE_LENGTH_ETH_C - 1                       //Position of the last data byte in the array of data bytes of ETHERNET_STATUS_CHECK_T
 #define ETH_CONNECTION_OFF      0x02                                             //Connected to ethernet (value 0x02 to match enum LinkON from STM32Ethernet.h)
 #define ETH_CONNECTION_UNKNOWN  0x03                                             //Connected to ethernet (value 0x03 to match enum LinkON from STM32Ethernet.h)
+
+typedef uint8_t BYTE;

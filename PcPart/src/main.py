@@ -30,4 +30,3 @@ while True:
 
     elif decoder.checkSumCheck(packet) == StatusLog.INVALID_CHECK_SUM:
         print('Error: Invalid check sum')
-

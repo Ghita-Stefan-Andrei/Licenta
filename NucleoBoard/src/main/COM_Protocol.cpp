@@ -1,17 +1,17 @@
 #include "COM_Protocol.h"
 
-Packet::Packet(const uint8_t* data, uint8_t length)
+Packet::Packet(const BYTE* data, uint8_t length)
 {
     this->startByte = START_BYTE;
-    this->dataBytes = new uint8_t[length];
+    this->dataBytes = new BYTE[length];
     this->dataSize = length;
     memcpy(this->dataBytes, data, length);
     this->calculateCheckSum();
 }
 
-void Packet::createTriggerPacket(uint8_t* timeData, uint8_t slopeByte)
+void Packet::createTriggerPacket(BYTE* timeData, BYTE slopeByte)
 {
-    this->dataBytes = new uint8_t[DATA_BYTE_LENGTH_TRIG];
+    this->dataBytes = new BYTE[DATA_BYTE_LENGTH_TRIG];
     this->dataSize = DATA_BYTE_LENGTH_TRIG;
     this->dataBytes[TYPE_BYTE_POSITION] = TRIGGER_TYPE;
     for (uint8_t timeDataIndex = 0; timeDataIndex < TIME_TO_BYTE_ARRAY_LEN; timeDataIndex++)
@@ -28,7 +28,7 @@ void Packet::createBootPacket()
     this->dataBytes[TYPE_BYTE_POSITION] = BOOT_TYPE;
 }
 
-void Packet::createEthernetPacket(uint8_t* ipAdress, uint8_t ethStatus, uint8_t type)
+void Packet::createEthernetPacket(BYTE* ipAdress, BYTE ethStatus, uint8_t type)
 {
     if(type == ETHERNET_STATUS_TYPE)
     {
@@ -51,7 +51,7 @@ void Packet::createEthernetPacket(uint8_t* ipAdress, uint8_t ethStatus, uint8_t 
 
 }
 
-Packet::Packet(const uint8_t packetType, uint8_t* dataByteArr, uint8_t extraByte)
+Packet::Packet(const uint8_t packetType, BYTE* dataByteArr, BYTE extraByte)
 {
     this->startByte = START_BYTE;
     switch(packetType)
@@ -79,7 +79,7 @@ char* Packet::buildHexStringPacket()
   const char hexDigits[] = "0123456789ABCDEF";
 
   uint8_t buildPacketSize = this->dataSize + EXTRA_BYTES;
-  this->buildPacket = new uint8_t[buildPacketSize];
+  this->buildPacket = new BYTE[buildPacketSize];
 
   this->buildPacket[FIRST_BYTE] = this->startByte;
   this->buildPacket[SECOND_BYTE] = this->dataSize;

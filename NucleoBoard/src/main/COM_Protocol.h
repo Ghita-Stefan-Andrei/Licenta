@@ -6,11 +6,11 @@
 class Packet
 {
   private:
-    uint8_t  startByte;
-    uint8_t* dataBytes;
-    uint8_t  checkSum;
-    uint8_t  dataSize;
-    uint8_t* buildPacket;
+    BYTE  startByte;
+    BYTE* dataBytes;
+    BYTE  checkSum;
+    BYTE  dataSize;
+    BYTE* buildPacket;
     char*    builtPacket;
 
   private:
@@ -25,7 +25,7 @@ class Packet
       * @param timeData Pointer to the array containing the timestamp data.
       * @param slopeByte The byte representing the slope information.
       */
-    void createTriggerPacket(uint8_t* dataByteArr, uint8_t extraByte);
+    void createTriggerPacket(BYTE* dataByteArr, BYTE extraByte);
 
     /**
       * @brief Creates a boot packet.
@@ -45,7 +45,7 @@ class Packet
       * @param ipAdress Pointer to the array containing the IP address.
       * @param ethStatus The Ethernet connection status (connected or disconnected).
       */
-    void createEthernetPacket(uint8_t* dataByteArr, uint8_t extraByte, uint8_t type);
+    void createEthernetPacket(BYTE* dataByteArr, BYTE extraByte, uint8_t type);
 
     /**
       * @brief Calculates the checksum for the packet.
@@ -72,7 +72,7 @@ class Packet
       *
       * @note Memory for `dataBytes` is dynamically allocated and is released in the destructor.
       */
-    Packet(const uint8_t* data, uint8_t length);
+    Packet(const BYTE* data, uint8_t length);
     
     /**
       * @brief Constructor for creating specific types of packets based on input parameters.
@@ -85,7 +85,7 @@ class Packet
       * @param dataByteArr Pointer to an array of data bytes used for creating the packet (varies based on the packet type).
       * @param extraByte An additional byte used in some packet types to convey extra information (such as slope type for trigger packets, or Ethernet connection status for Ethernet packets).
       */
-    Packet(const uint8_t packetType, uint8_t* dataByteArr = nullptr, uint8_t extraByte = 0x00);
+    Packet(const uint8_t packetType, BYTE* dataByteArr = nullptr, BYTE extraByte = 0x00);
 
     /**
       * @brief Builds and returns a data packet as a hexadecimal string.

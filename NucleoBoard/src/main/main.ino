@@ -15,7 +15,7 @@ void setup() {
 
   Packet bootPack(BOOT_TYPE);
   Serial.print(bootPack.buildHexStringPacket());
-
+  // Ethernet
   ethInfoStatus = initEthernet();
 
   uint8_t ip[IP_BYTE_LENGTH];
@@ -57,8 +57,8 @@ void loop() {
 
     if (timeClient.updated())
     {
-      uint8_t slopeType = 0x00;
-      uint8_t timeData[TIME_TO_BYTE_ARRAY_LEN];
+      BYTE slopeType = 0x00;
+      BYTE timeData[TIME_TO_BYTE_ARRAY_LEN];
 
       getTimeStampAsByteArray(&timeClient, timeData, serverResponseTime);
 
