@@ -1,15 +1,11 @@
-import serial
-import argparse
 from COM_Protocol import InterpretPacket as InP
 from COM_Protocol import StatusLog
 from COM_Protocol import ByteDex
 from COM_Protocol import getSerialSettings
+import serial
+import CLArguments
 
-parser = argparse.ArgumentParser(description = "Select in serial setting are read from file or inserted manually")
-parser.add_argument("--source", choices = ['keyboard', 'file'], required = True, help = "Specify the input source: 'keyboard' for input from keyboard, 'file' for input from a file.")
-parser.add_argument("--filePath", type = str)
-
-args = parser.parse_args()
+args = CLArguments.createCLArguments()
 
 com, bitRate = getSerialSettings(args.source, args.filePath)
 

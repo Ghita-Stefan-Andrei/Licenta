@@ -15,97 +15,96 @@ class Packet
 
   private:
     /**
-      * @brief Creează un pachet de trigger cu datele de timp și informații despre panta.
+      * @brief Creates a trigger packet with timestamp data and slope information.
       * 
-      * Această funcție inițializează array-ul de date pentru pachet, stabilește dimensiunea acestuia,
-      * plasează un tip predefinit de pachet de trigger în poziția de byte type specificată,
-      * copiază datele de timp furnizate începând de la o poziție de byte specifică după byte type,
-      * și setează byte-ul pantei ca ultim byte de date al pachetului.
+      * This function initializes the data array for the packet, sets its size,
+      * places a predefined type of trigger packet at the specified byte position,
+      * copies the provided timestamp data starting from a specific byte position after the type byte,
+      * and sets the slope byte as the last data byte of the packet.
       *
-      * @param timeData Pointer către array-ul care conține datele de timp.
-      * @param slopeByte Byte-ul care reprezintă informația despre pantă.
+      * @param timeData Pointer to the array containing the timestamp data.
+      * @param slopeByte The byte representing the slope information.
       */
     void createTriggerPacket(uint8_t* dataByteArr, uint8_t extraByte);
 
     /**
-      * @brief Creează un pachet de boot.
+      * @brief Creates a boot packet.
       * 
-      * Această funcție alocă memoria pentru pachetul de boot, stabilește dimensiunea acestuia,
-      * și atribuie tipul de pachet de boot la poziția byte-ului de tip.
+      * This function allocates memory for the boot packet, sets its size,
+      * and assigns the boot packet type to the type byte position.
       */
     void createBootPacket();
 
     /**
-      * @brief Creează un pachet de stare Ethernet cu adresa IP și starea conexiunii.
+      * @brief Creates an Ethernet status packet with IP address and connection status.
       * 
-      * Această funcție inițializează array-ul de date pentru pachetul Ethernet, stabilește dimensiunea acestuia,
-      * atribuie tipul de pachet de stare Ethernet în poziția predefinită, copiază adresa IP furnizată
-      * în pachet și setează starea conexiunii Ethernet ca ultim byte al pachetului.
+      * This function initializes the data array for the Ethernet packet, sets its size,
+      * assigns the Ethernet status packet type at the predefined position, copies the provided IP address
+      * into the packet, and sets the Ethernet connection status as the last byte of the packet.
       *
-      * @param ipAdress Pointer către array-ul care conține adresa IP.
-      * @param ethStatus Starea conexiunii Ethernet (conectat sau neconectat).
+      * @param ipAdress Pointer to the array containing the IP address.
+      * @param ethStatus The Ethernet connection status (connected or disconnected).
       */
     void createEthernetPacket(uint8_t* dataByteArr, uint8_t extraByte, uint8_t type);
 
     /**
-      * @brief Calculează suma de control pentru pachet.
+      * @brief Calculates the checksum for the packet.
       * 
-      * Inițializează suma de control cu valoarea startByte, apoi aplică XOR între suma de control 
-      * curentă și fiecare octet de date din pachet, actualizând suma de control.
+      * Initializes the checksum with the value of startByte, then applies XOR between the current checksum 
+      * and each data byte in the packet, updating the checksum.
       * 
-      * Această metodă actualizează membrul 'checkSum' al clasei.
+      * This method updates the 'checkSum' member of the class.
       *
-      * @note Această metodă nu are parametri de intrare și nu returnează o valoare, ci
-      *       doar actualizează starea internă a obiectului Packet.
+      * @note This method has no input parameters and does not return a value, it only updates the internal state of the Packet object.
       */
     void calculateCheckSum();
 
   public:
     /**
-      * @brief Constructor pentru clasa Packet.
+      * @brief Constructor for the Packet class.
       *
-      * Acest constructor inițializează un nou obiect Packet cu datele specificate.
-      * Setează byte-ul de start la o valoare predefinită, alocă și copiază datele primite
-      * într-un buffer intern, și calculează suma de control pentru pachet.
+      * This constructor initializes a new Packet object with the specified data.
+      * It sets the start byte to a default value, allocates and copies the received data
+      * into an internal buffer, and calculates the checksum for the packet.
       *
-      * @param data Pointer către array-ul de date care va fi inclus în pachet.
-      * @param length Lungimea array-ului de date, în octeți.
+      * @param data Pointer to the array of data to be included in the packet.
+      * @param length Length of the data array, in bytes.
       *
-      * @note Memoria pentru `dataBytes` este alocată dinamic și este eliberată în deconstructor.
+      * @note Memory for `dataBytes` is dynamically allocated and is released in the destructor.
       */
     Packet(const uint8_t* data, uint8_t length);
     
     /**
-      * @brief Constructor pentru crearea tipurilor specifice de pachete bazate pe parametrii de intrare.
+      * @brief Constructor for creating specific types of packets based on input parameters.
       * 
-      * Acest constructor setează byte-ul de început și inițiază crearea pachetului pe baza
-      * tipului de pachet furnizat (de exemplu, trigger, boot sau Ethernet). De asemenea, calculează checksum-ul
-      * pentru pachetul creat.
+      * This constructor sets the start byte and initiates the creation of the packet based on
+      * the provided packet type (e.g., trigger, boot, or Ethernet). It also calculates the checksum
+      * for the created packet.
       *
-      * @param packetType Tipul de pachet care urmează să fie creat.
-      * @param dataByteArr Pointer către un array de bytes de date utilizat pentru crearea pachetului (variază în funcție de tipul pachetului).
-      * @param extraByte Un byte extra utilizat în unele tipuri de pachete pentru a transmite informații suplimentare (precum tipul pantei pt pachete trigger, sau statusul conexiunii ethernet pt pachete ethernet).
+      * @param packetType The type of packet to be created.
+      * @param dataByteArr Pointer to an array of data bytes used for creating the packet (varies based on the packet type).
+      * @param extraByte An additional byte used in some packet types to convey extra information (such as slope type for trigger packets, or Ethernet connection status for Ethernet packets).
       */
     Packet(const uint8_t packetType, uint8_t* dataByteArr = nullptr, uint8_t extraByte = 0x00);
 
     /**
-      * @brief Construiește și returnează un pachet de date sub formă de șir de caractere hexazecimale.
+      * @brief Builds and returns a data packet as a hexadecimal string.
       *
-      * Funcția generează un pachet de date ce include un octet de start, dimensiunea datelor,
-      * datele propriu-zise și o sumă de control, toate acestea fiind apoi convertite în format hexazecimal.
-      * Pachetul generat este alocat dinamic și va fi eliberat automat de deconstructorul clasei.
+      * This function generates a data packet that includes a start byte, data size,
+      * the actual data, and a checksum, all of which are then converted to hexadecimal format.
+      * The generated packet is dynamically allocated and will be automatically released by the class destructor.
       *
-      * @return Un pointer către pachetul hexazecimal construit sub formă de șir de caractere.
-      *         Acest șir este terminat cu caracterul null pentru a putea fi utilizat ca și C-string.
+      * @return A pointer to the constructed hexadecimal packet as a string of characters.
+      *         This string is null-terminated for use as a C-string.
       */
     char* buildHexStringPacket();
 
     /**
-      * @brief Deconstructorul pentru clasa Packet.
+      * @brief Destructor for the Packet class.
       *
-      * Acest deconstructor eliberează memoria alocată dinamic pentru câmpurile 'dataBytes', 'buildPacket' și 'builtPacket'.
-      * Este esențial să te asiguri că obiectul Packet este deconstruit doar după ce pachetul a fost trimis și
-      * nu mai este necesar, pentru a evita utilizarea unor referințe invalide la memoria dealocată.
+      * This destructor releases the dynamically allocated memory for the 'dataBytes', 'buildPacket', and 'builtPacket' fields.
+      * It is essential to ensure that the Packet object is destructed only after the packet has been sent and
+      * is no longer needed, to avoid using invalid references to deallocated memory.
       */
     ~Packet();
 };

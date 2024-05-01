@@ -1,5 +1,4 @@
 from functools import reduce
-import re
 from defines import StatusLog
 from defines import ByteDex
 from defines import Format
@@ -9,6 +8,18 @@ class InterpretPacket:
         self.individualBytes = []
 
     def checkHeader(self, header):
+        """
+        This function checks the header of a received packet.
+
+        Args:
+            header (str): The header of the received packet.
+
+        Returns:
+            tuple: A tuple containing the following:
+                - The header.
+                - The status of the check (RIGHT_START_BYTE, WRONG_START_BYTE).
+                - The length of the packet, in bytes.
+        """
         startByte = header[0:2]
         dataLenByte = header[2:]
 
@@ -23,12 +34,33 @@ class InterpretPacket:
         return retHeader, retStatus, length
     
     def checkSumCheck(self, packet): 
+        """
+        This function performs a checksum check on the packet.
+        And separates the bytes of the packet in a list of bytes. 
+
+        Args:
+            packet (str): The packet on which the checksum check needs to be performed.
+
+        Returns:
+            str: Returns StatusLog.INVALID_CHECK_SUM if the checksum is invalid, 
+                 otherwise returns StatusLog.VALID_CHECK_SUM.
+        """
         sliceBytes = 2
         self.individualBytes = [ByteDex.getByteFromStr(packet[i:i+sliceBytes]) for i in range(0, len(packet), sliceBytes)]
         if reduce(lambda x, y: x ^ y, self.individualBytes) != 0: return StatusLog.INVALID_CHECK_SUM #checkSum
         return StatusLog.VALID_CHECK_SUM
 
     def decodeEthPacket(self, packet):
+        """
+        Decodes the Ethernet packet that is sent when the board first connection to ethernet is tried and returns the status and IP address.
+
+        Args:
+            packet (str): The packet to be easly displayed.
+
+        Returns:
+            str: Returns a message indicating the internet connection status and the IP address if connected.
+                 If not connected, returns a message indicating no internet connection found.
+        """
         ethStatus = self.individualBytes[ByteDex.ETHERNET_STATUS_POS]
 
         if ethStatus == ByteDex.NOT_CONNECTED: return f"No internet connection found.\nPacket: {packet}\n"
@@ -43,6 +75,15 @@ class InterpretPacket:
 
 
     def decodeTriggerPacket(self, packet):
+        """
+        Decodes the trigger packet and extracts relevant information such as timestamp and slope type.
+
+        Args:
+            packet (str): The packet to be easly displayed.
+
+        Returns:
+            str: A formatted string containing the timestamp and slope type.
+        """
         year   = self.individualBytes[ByteDex.YEAR] + Format.YEAR_OFFSET;
         month  = self.individualBytes[ByteDex.MONTH]
         day    = self.individualBytes[ByteDex.DAY]
@@ -71,6 +112,18 @@ class InterpretPacket:
                )
     
     def decodeEthCheckPacket(self, packet):
+        """
+        Decodes the Ethernet check packet and determines the status of the Ethernet connection.
+
+        Args:
+            packet (str): The packet to be easily displayed.
+
+        Returns:
+            str: A message indicating the status of the Ethernet connection and the packet details.
+                 If connected, returns 'Connected to ethernet' along with the packet details.
+                 If disconnected, returns 'Disconnected from ethernet' along with the packet details.
+                 If the status is unknown, returns 'Unknown' along with the packet details.
+        """
         status = ''
         if self.individualBytes[ByteDex.ETHERNET_CHECK_POS] == ByteDex.CONNECTED:
             status = f'Connected to ethernet\nPacket: {packet}\n'
@@ -82,6 +135,20 @@ class InterpretPacket:
         return status
         
     def decodePacket(self, packet):
+        """
+        Decodes the packet based on its type and returns the decoded data.
+
+        Args:
+            packet (str): The packet to be decoded.
+
+        Returns:
+            str: A formatted string containing the decoded information based on the packet type.
+                 If the packet type is a trigger byte, it returns the timestamp and slope type.
+                 If the packet type is a boot byte, it returns a message indicating that the board booted up.
+                 If the packet type is an Ethernet status byte, it returns the internet connection status and IP address.
+                 If the packet type is an Ethernet status check, it returns the status of the Ethernet connection.
+                 If the packet type is unknown, it returns a message indicating the unknown packet type.
+        """
         decodedData = ''
         if self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.TRIGGER_BYTE:
             decodedData = self.decodeTriggerPacket(packet)
@@ -101,6 +168,18 @@ class InterpretPacket:
         return decodedData
 
 def getSerialSettings(consoleXfile, filePath):
+    """
+    Retrieves the serial settings based on the input method and file path.
+
+    Args:
+        consoleXfile (str): The method of input for serial settings ('keyboard' or 'file').
+        filePath (str): The file path for serial settings if the method is 'file'.
+
+    Returns:
+        tuple: A tuple containing the following:
+            - The COM port number in the format "COM{com}".
+            - The bit rate for the serial communication.
+    """
     com, bitRate = '', 0
     if consoleXfile == 'keyboard':
         while True:
