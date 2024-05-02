@@ -13,7 +13,7 @@ void setup() {
 
   Serial.begin(115200);
   while (!Serial && millis() < 5000);
-
+  
   Packet bootPack(BOOT_TYPE);
   Serial.print(bootPack.buildHexStringPacket());
   // Ethernet

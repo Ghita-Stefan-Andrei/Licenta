@@ -7,6 +7,17 @@ class InterpretPacket:
     def __init__(self):
         self.individualBytes = []
 
+    def findStartByte(self, ser):
+        while True:
+            byte = ser.read(1)
+            if byte == b'':
+                return False  
+            if byte.decode('utf-8', errors='ignore') == 'A':  
+                second_byte = ser.read(1)
+                if second_byte.decode('utf-8', errors='ignore') == 'A':
+                    return True
+                return False
+
     def checkHeader(self, header):
         """
         This function checks the header of a received packet.

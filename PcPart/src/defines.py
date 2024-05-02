@@ -10,6 +10,7 @@ class ByteDex:
         return int(byte, 16)
     
     HEADER_LENGTH            = 4                                           #bytes read from serial
+    HEAD_BYTE                = 2                                           #to calculate how much bytes from the header needs to be read
     TYPE_BYTE_POSITION       = 2                                           #Position of the type byte in the pack
     TIME_FIRST_BYTE_POSITION = 3                                           #Pointer to the first position of the time data array in the pack
     TOTAL_TIME_BYTES         = 8                                           #Number of time data bytes in the pack
