@@ -55,11 +55,11 @@ void loop() {
   bool currentPinState = digitalRead(SIGNAL_MONITOR_PIN);
   if(currentPinState != lastPinState)
   {
-    uint32_t serverResponseDelay1 = millis();
+    uint32_t beforeNtpRequest = millis();
     timeClient.update();
-    uint32_t serverResponseDelay2 = millis();
+    uint32_t afterNtppRequest = millis();
 
-    uint32_t serverResponseTime = serverResponseDelay2 - serverResponseDelay1;
+    uint32_t serverResponseTime = afterNtppRequest - beforeNtpRequest;
 
     if (timeClient.updated())
     {
@@ -77,14 +77,15 @@ void loop() {
   }
   lastPinState = currentPinState;
   
+  //Check physical connection to ethernet
   EthernetLinkStatus status = Ethernet.linkStatus();
   if (status != lastEthStatus)
   {
     Packet checkEth(ETHERNET_STATUS_CHECK_T, NO_DATA, status);
     Serial.print(checkEth.buildHexStringPacket());
 
-    if (status == LinkOFF) digitalWrite(LED_RED, HIGH);
-    if (status == LinkON)  NVIC_SystemReset();
+    if (status == LinkOFF) digitalWrite(LED_RED, HIGH);  //Light up the red led whnt the connection is broken
+    if (status == LinkON)  NVIC_SystemReset();           //Reset the board to try to reconnect to internet after an ethernet connection is reestablished
   }
   lastEthStatus = status;
 }

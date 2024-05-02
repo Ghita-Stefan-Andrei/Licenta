@@ -11,7 +11,7 @@ class Packet
     BYTE  checkSum;
     BYTE  dataSize;
     BYTE* buildPacket;
-    char*    builtPacket;
+    char* builtPacket;
 
   private:
     /**
