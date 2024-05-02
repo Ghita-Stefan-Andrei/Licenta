@@ -4,12 +4,12 @@ EthernetUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
 
 bool lastPinState = LOW;
+bool reconected = false;
 ethInfo ethInfoStatus;
 EthernetLinkStatus lastEthStatus;
 
 void setup() {
-  pinMode(LED_RED, OUTPUT);    //while the RED led is on the board is in setup, once it closes and the BLUE led lights up the board enters the loop
-  digitalWrite(LED_RED, HIGH);
+  pinMode(LED_RED, OUTPUT);    //the RED led marks the connection to ethernet. If it is on, the board is not connected to ethernet.
 
   Serial.begin(115200);
   while (!Serial && millis() < 5000);
@@ -27,6 +27,12 @@ void setup() {
 
   lastEthStatus = Ethernet.linkStatus();
 
+  if (lastEthStatus == LinkON) 
+    digitalWrite(LED_RED, LOW);
+      
+  else if (lastEthStatus == LinkOFF)
+    digitalWrite(LED_RED, HIGH);
+
   // End Ethernet //
 
   // Time Client for NTP request Set UP //
@@ -42,9 +48,7 @@ void setup() {
 
   pinMode(LED_BLUE, OUTPUT);
   digitalWrite(LED_BLUE, HIGH);
-  digitalWrite(LED_RED, LOW);
 }
-
 
 // the loop function runs over and over again forever
 void loop() {
@@ -78,6 +82,9 @@ void loop() {
   {
     Packet checkEth(ETHERNET_STATUS_CHECK_T, NO_DATA, status);
     Serial.print(checkEth.buildHexStringPacket());
+
+    if (status == LinkOFF) digitalWrite(LED_RED, HIGH);
+    if (status == LinkON)  NVIC_SystemReset();
   }
   lastEthStatus = status;
 }
