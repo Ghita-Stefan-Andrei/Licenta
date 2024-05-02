@@ -8,15 +8,29 @@ class InterpretPacket:
         self.individualBytes = []
 
     def findStartByte(self, ser):
+        """
+        Finds the start byte of a packet in the serial communication.
+    
+        Args:
+            ser: The serial communication object.
+    
+        Returns:
+            bool: True if the start byte is found, False otherwise.
+        """
+        found = False
         while True:
             byte = ser.read(1)
             if byte == b'':
-                return False  
+                found = False
+                break  
             if byte.decode('utf-8', errors='ignore') == 'A':  
                 second_byte = ser.read(1)
                 if second_byte.decode('utf-8', errors='ignore') == 'A':
-                    return True
-                return False
+                    found = True
+                    break
+                found = False
+                break
+        return found
 
     def checkHeader(self, header):
         """
