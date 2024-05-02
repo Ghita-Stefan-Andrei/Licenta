@@ -14,16 +14,18 @@ void Packet::createTriggerPacket(BYTE* timeData, BYTE slopeByte)
     this->dataBytes = new BYTE[DATA_BYTE_LENGTH_TRIG];
     this->dataSize = DATA_BYTE_LENGTH_TRIG;
     this->dataBytes[TYPE_BYTE_POSITION] = TRIGGER_TYPE;
+
     for (uint8_t timeDataIndex = 0; timeDataIndex < TIME_TO_BYTE_ARRAY_LEN; timeDataIndex++)
     {
         this->dataBytes[BYTES_BEFORE_TIME_DATA + timeDataIndex] = timeData[timeDataIndex];
     }
+
     this->dataBytes[SLOPE_BYTE_POSITION] = slopeByte;
 }
 
 void Packet::createBootPacket()
 {
-    this->dataBytes = new uint8_t[TYPE_BYTE];
+    this->dataBytes = new BYTE[TYPE_BYTE];
     this->dataSize = TYPE_BYTE;
     this->dataBytes[TYPE_BYTE_POSITION] = BOOT_TYPE;
 }
@@ -32,23 +34,24 @@ void Packet::createEthernetPacket(BYTE* ipAdress, BYTE ethStatus, uint8_t type)
 {
     if(type == ETHERNET_STATUS_TYPE)
     {
-        this->dataBytes = new uint8_t[DATA_BYTE_LENGTH_ETH];
+        this->dataBytes = new BYTE[DATA_BYTE_LENGTH_ETH];
         this->dataSize = DATA_BYTE_LENGTH_ETH;
         this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_TYPE;
+
         for (uint8_t ipByte = 0; ipByte < IP_BYTE_LENGTH; ipByte++)
         {
             this->dataBytes[BYTES_BEFORE_IP + ipByte] = ipAdress[ipByte];
         }
+
         this->dataBytes[ETH_STATUS_BYTE_POS] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : ETH_NOT_CONNECTED;
     }
     else if (type == ETHERNET_STATUS_CHECK_T)
     {
-        this->dataBytes = new uint8_t[DATA_BYTE_LENGTH_ETH_C];
+        this->dataBytes = new BYTE[DATA_BYTE_LENGTH_ETH_C];
         this->dataSize = DATA_BYTE_LENGTH_ETH_C;
         this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_CHECK_T;
         this->dataBytes[ETH_STATUS_BYTE_POS_C] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : (ethStatus == ETH_CONNECTION_OFF) ? ETH_NOT_CONNECTED : ETH_CONNECTION_UNKNOWN;
     }
-
 }
 
 Packet::Packet(const uint8_t packetType, BYTE* dataByteArr, BYTE extraByte)

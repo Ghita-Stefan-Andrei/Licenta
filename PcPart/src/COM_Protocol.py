@@ -63,7 +63,7 @@ class InterpretPacket:
         """
         ethStatus = self.individualBytes[ByteDex.ETHERNET_STATUS_POS]
 
-        if ethStatus == ByteDex.NOT_CONNECTED: return f"No internet connection found.\nPacket: {packet}\n"
+        if ethStatus == ByteDex.NOT_CONNECTED: return f"No ethernet connection found.\nPacket: {packet}\n"
 
         if ethStatus == ByteDex.CONNECTED:
             ipFirstByte  = self.individualBytes[ByteDex.IP_FIRST_BYTE]
@@ -71,7 +71,7 @@ class InterpretPacket:
             ipThirdByte  = self.individualBytes[ByteDex.IP_THIRD_BYTE]
             ipForthByte  = self.individualBytes[ByteDex.IP_FORTH_BYTE]
 
-            return f"Connected to internet.\nIP:{ipFirstByte}.{ipSecondByte}.{ipThirdByte}.{ipForthByte}\nPacket: {packet}\n"
+            return f"Connected to ethernet.\nIP:{ipFirstByte}.{ipSecondByte}.{ipThirdByte}.{ipForthByte}\nPacket: {packet}\n"
 
 
     def decodeTriggerPacket(self, packet):

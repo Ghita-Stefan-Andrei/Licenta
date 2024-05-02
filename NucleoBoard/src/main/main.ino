@@ -5,6 +5,7 @@ NTPClient timeClient(ntpUDP);
 
 bool lastPinState = LOW;
 ethInfo ethInfoStatus;
+EthernetLinkStatus lastEthStatus;
 
 void setup() {
   pinMode(LED_RED, OUTPUT);    //while the RED led is on the board is in setup, once it closes and the BLUE led lights up the board enters the loop
@@ -24,6 +25,8 @@ void setup() {
   Packet ethPack(ETHERNET_STATUS_TYPE, ip, ethInfoStatus.status);
   Serial.print(ethPack.buildHexStringPacket());
 
+  lastEthStatus = Ethernet.linkStatus();
+
   // End Ethernet //
 
   // Time Client for NTP request Set UP //
@@ -42,7 +45,6 @@ void setup() {
   digitalWrite(LED_RED, LOW);
 }
 
-EthernetLinkStatus lastEthStatus = !(ethInfoStatus.status) ? LinkON : LinkOFF;
 
 // the loop function runs over and over again forever
 void loop() {
