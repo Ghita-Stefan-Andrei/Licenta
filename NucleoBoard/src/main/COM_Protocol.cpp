@@ -54,6 +54,14 @@ void Packet::createEthernetPacket(BYTE* ipAdress, BYTE ethStatus, uint8_t type)
     }
 }
 
+void Packet::createNTPstatusPacket(BYTE extraByte)
+{
+    this->dataBytes = new BYTE[DATA_BYTE_LENGTH_NTP_S];
+    this->dataSize = DATA_BYTE_LENGTH_NTP_S;
+    this->dataBytes[TYPE_BYTE_POSITION] = NTP_STATUS_TYPE;
+    this->dataBytes[NTP_STATUS_POSITION] = extraByte;
+}
+
 Packet::Packet(const uint8_t packetType, BYTE* dataByteArr, BYTE extraByte)
 {
     this->startByte = START_BYTE;
@@ -63,6 +71,7 @@ Packet::Packet(const uint8_t packetType, BYTE* dataByteArr, BYTE extraByte)
         case BOOT_TYPE:               createBootPacket(); break;
         case ETHERNET_STATUS_TYPE:    createEthernetPacket(dataByteArr, extraByte, packetType); break;
         case ETHERNET_STATUS_CHECK_T: createEthernetPacket(dataByteArr, extraByte, packetType); break;
+        case NTP_STATUS_TYPE:         createNTPstatusPacket(extraByte); break;
         default: break;
     }
     this->calculateCheckSum();

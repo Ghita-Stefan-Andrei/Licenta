@@ -15,6 +15,7 @@ class ByteDex:
     TIME_FIRST_BYTE_POSITION = 3                                           #Pointer to the first position of the time data array in the pack
     TOTAL_TIME_BYTES         = 8                                           #Number of time data bytes in the pack
     SLOPE_BYTE_POSITION      = TIME_FIRST_BYTE_POSITION + TOTAL_TIME_BYTES #Position of the slope type byte
+    NTP_STATUS_BYTE_POSITION = 3                                           #Position of the NTP status byte
 
     YEAR    = TIME_FIRST_BYTE_POSITION + 0 #Position of the byte that tells the year in raport to TIME_FIRST_BYTE_POSITION
     MONTH   = TIME_FIRST_BYTE_POSITION + 1 #Position of the byte that tells the month in raport to TIME_FIRST_BYTE_POSITION
@@ -30,6 +31,7 @@ class ByteDex:
     BOOT_BYTE              = 0xAC #Byte that tells that the pack is about the board starting to run
     ETHERNET_STATUS_BYTE   = 0xAD #Byte that tells that the pack is about the ethernet connection status of the board during set up
     ETHERNET_STATUS_CHECK  = 0xAE #Byte that tells that the pack is about the board connection to ethernet during program execution
+    NTP_STATUS_CHECK       = 0xAF #Byte that tells that the pack is about the status of the NTP client on the board  
 
     RISING_SLOPE           = 0x01 #Byte marking that the signal went from 0 to 1
     FALLING_SLOPE          = 0x10 #Byte marking that the signal went from 1 to 0
@@ -44,6 +46,9 @@ class ByteDex:
     IP_FORTH_BYTE          = IP_FIRST_BYTE_POSITION + 3
     ETHERNET_STATUS_POS    = IP_FIRST_BYTE_POSITION + TOTAL_IP_BYTES #Status of ethernet byte position in ETHERNET_STATUS_BYTE pack
     ETHERNET_CHECK_POS     = 3                                       #Status of ethernet byte position in ETHERNET_STATUS_CHECK pack
+
+    NTP_STATUS_UPDATED     =  0xFF #Status of NTP client, if it was updated
+    NTP_STATUS_NOT_UPDATED =  0x00 #Status of NTP server, if it was not updated
 
 class Format:
     TIME_DISPLAY_FORMAT = '0>2'    #Format do display months, days, hours, minutes, seconds in a 2 digit format

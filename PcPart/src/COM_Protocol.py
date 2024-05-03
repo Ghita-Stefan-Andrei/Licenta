@@ -159,6 +159,16 @@ class InterpretPacket:
         
         return status
         
+    def decodeNTPStatusPacket(self, packet):
+        status = ''
+
+        if self.individualBytes[ByteDex.NTP_STATUS_BYTE_POSITION] == ByteDex.NTP_STATUS_UPDATED:
+            status = f'NTP Client is updated.\nPacket: {packet}\n'
+        elif  self.individualBytes[ByteDex.NTP_STATUS_BYTE_POSITION] == ByteDex.NTP_STATUS_NOT_UPDATED:
+            status = f'Trigger signal registered but the NTP Client is not updated.\nPacket: {packet}\n'
+
+        return status
+
     def decodePacket(self, packet):
         """
         Decodes the packet based on its type and returns the decoded data.
@@ -186,6 +196,9 @@ class InterpretPacket:
 
         elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.ETHERNET_STATUS_CHECK:
             decodedData = self.decodeEthCheckPacket(packet)
+
+        elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.NTP_STATUS_CHECK:
+            decodedData = self.decodeNTPStatusPacket(packet)
 
         else:
             decodedData = f"Unknown packet type: {hex(self.individualBytes[ByteDex.TYPE_BYTE_POSITION])[2:].upper()}"

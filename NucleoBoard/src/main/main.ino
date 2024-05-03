@@ -75,6 +75,11 @@ void loop() {
       Packet trigPack(TRIGGER_TYPE, timeData, slopeType);
       Serial.print(trigPack.buildHexStringPacket());
     }
+    else
+    {
+      Packet NTPStatusPack(NTP_STATUS_TYPE, NO_DATA, NTP_STATUS_NOT_UPDATED);
+      Serial.print(NTPStatusPack.buildHexStringPacket());
+    }
   }
   lastPinState = currentPinState;
   

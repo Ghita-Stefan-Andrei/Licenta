@@ -38,4 +38,12 @@
 #define ETH_CONNECTION_OFF      0x02                                             //Connected to ethernet (value 0x02 to match enum LinkON from STM32Ethernet.h)
 #define ETH_CONNECTION_UNKNOWN  0x03                                             //Connected to ethernet (value 0x03 to match enum LinkON from STM32Ethernet.h)
 
+//NTP server availability
+#define NTP_STATUS_TYPE         0xAF                                             //Type of packet that tells if the NTP CLient on the board has been updated or not
+#define NTP_STATUS_UPDATED      0xFF                                             //Status of the NTP Client, 0xFF means it has been updated
+#define NTP_STATUS_NOT_UPDATED  0x00                                             //Status of the NTP Client, 0x00 means it has not been updated
+#define NTP_STATUS              1                                                //Number of bytes used in the packet for the NTP Client status
+#define DATA_BYTE_LENGTH_NTP_S  TYPE_BYTE + NTP_STATUS                           //Number of bytes of the data payload
+#define LAST_BYTE_POSITION      DATA_BYTE_LENGTH_NTP_S - 1                       //The position of the last data byte
+#define NTP_STATUS_POSITION     LAST_BYTE_POSITION                               //The position of the NTP CLient status byte
 typedef uint8_t BYTE;

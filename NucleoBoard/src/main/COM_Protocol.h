@@ -48,6 +48,15 @@ class Packet
     void createEthernetPacket(BYTE* dataByteArr, BYTE extraByte, uint8_t type);
 
     /**
+      * @brief Creates an NTP status packet to check if the internal time has been updated.
+      * 
+      * This function creates a packet with the information about the state of the time client,
+      *
+      * @param extraByte The extra byte containing the status information.
+      */
+    void createNTPstatusPacket(BYTE extraByte);
+
+    /**
       * @brief Calculates the checksum for the packet.
       * 
       * Initializes the checksum with the value of startByte, then applies XOR between the current checksum 
