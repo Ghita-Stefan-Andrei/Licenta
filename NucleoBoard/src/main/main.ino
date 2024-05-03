@@ -60,13 +60,14 @@ void loop() {
     uint32_t afterNtppRequest = millis();
 
     uint32_t serverResponseTime = afterNtppRequest - beforeNtpRequest;
+    uint32_t updatedMillis = timeClient.getEpochMillis() - serverResponseTime;
 
     if (timeClient.updated())
     {
       BYTE slopeType = 0x00;
       BYTE timeData[TIME_TO_BYTE_ARRAY_LEN];
 
-      getTimeStampAsByteArray(&timeClient, timeData, serverResponseTime);
+      getTimeStampAsByteArray(&timeClient, timeData, updatedMillis);
 
       if(currentPinState == HIGH) slopeType = RISING_SLOPE;
       if(currentPinState == LOW)  slopeType = FALLING_SLOPE;
