@@ -9,7 +9,7 @@ Packet::Packet(const BYTE* data, uint8_t length)
     this->calculateCheckSum();
 }
 
-void Packet::createTriggerPacket(BYTE* timeData, BYTE slopeByte)
+void Packet::createTriggerPacket(BYTE* timeData, BYTE slopeType)
 {
     this->dataBytes = new BYTE[DATA_BYTE_LENGTH_TRIG];
     this->dataSize = DATA_BYTE_LENGTH_TRIG;
@@ -20,7 +20,7 @@ void Packet::createTriggerPacket(BYTE* timeData, BYTE slopeByte)
         this->dataBytes[BYTES_BEFORE_TIME_DATA + timeDataIndex] = timeData[timeDataIndex];
     }
 
-    this->dataBytes[SLOPE_BYTE_POSITION] = slopeByte;
+    this->dataBytes[SLOPE_BYTE_POSITION] = (slopeType == HIGH) ? RISING_SLOPE : FALLING_SLOPE;
 }
 
 void Packet::createBootPacket()
@@ -54,12 +54,12 @@ void Packet::createEthernetPacket(BYTE* ipAdress, BYTE ethStatus, uint8_t type)
     }
 }
 
-void Packet::createNTPstatusPacket(BYTE extraByte)
+void Packet::createNTPstatusPacket(BYTE ntpStatus)
 {
     this->dataBytes = new BYTE[DATA_BYTE_LENGTH_NTP_S];
     this->dataSize = DATA_BYTE_LENGTH_NTP_S;
     this->dataBytes[TYPE_BYTE_POSITION] = NTP_STATUS_TYPE;
-    this->dataBytes[NTP_STATUS_POSITION] = extraByte;
+    this->dataBytes[NTP_STATUS_POSITION] = ntpStatus;
 }
 
 Packet::Packet(const uint8_t packetType, BYTE* dataByteArr, BYTE extraByte)

@@ -72,3 +72,13 @@ void decodeIP(uint8_t* IP, uint32_t rawIP)
   IP[2] = (rawIP >> 16) & 0x000000FF;
   IP[3] = (rawIP >> 24) & 0x000000FF;
 }
+
+uint32_t performNtpRequestAndCalibrateMlisecs(NTPClient &timeClient) 
+{
+  uint32_t beforeNtpRequest = millis();
+  timeClient.update();
+  uint32_t afterNtpRequest = millis();
+
+  uint32_t serverResponseTime = afterNtpRequest - beforeNtpRequest;
+  return timeClient.getEpochMillis() - serverResponseTime;
+}

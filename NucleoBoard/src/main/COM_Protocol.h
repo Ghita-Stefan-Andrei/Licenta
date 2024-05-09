@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <cstring>
+#include <Arduino.h>
 #include "COM_Protocol_Defines.h"
 
 class Packet
@@ -25,7 +26,7 @@ class Packet
       * @param timeData Pointer to the array containing the timestamp data.
       * @param slopeByte The byte representing the slope information.
       */
-    void createTriggerPacket(BYTE* dataByteArr, BYTE extraByte);
+    void createTriggerPacket(BYTE* timeData, BYTE slopeType);
 
     /**
       * @brief Creates a boot packet.
@@ -45,16 +46,16 @@ class Packet
       * @param ipAdress Pointer to the array containing the IP address.
       * @param ethStatus The Ethernet connection status (connected or disconnected).
       */
-    void createEthernetPacket(BYTE* dataByteArr, BYTE extraByte, uint8_t type);
+    void createEthernetPacket(BYTE* ipAdress, BYTE ethStatus, uint8_t type);
 
     /**
       * @brief Creates an NTP status packet to check if the internal time has been updated.
       * 
       * This function creates a packet with the information about the state of the time client,
       *
-      * @param extraByte The extra byte containing the status information.
+      * @param ntpStatus The extra byte containing the status information.
       */
-    void createNTPstatusPacket(BYTE extraByte);
+    void createNTPstatusPacket(BYTE ntpStatus);
 
     /**
       * @brief Calculates the checksum for the packet.

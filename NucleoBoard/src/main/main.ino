@@ -34,13 +34,9 @@ void setup() {
     digitalWrite(LED_RED, HIGH);
 
   // End Ethernet //
-
-  // Time Client for NTP request Set UP //
   timeClient.begin();
   timeClient.setTimeOffset(3600 * TIME_ZONE_OFFSET_HRS);
-  // default 60000 => 60s. Set to once per hour
-  timeClient.setUpdateInterval(SECS_IN_HR);
-  
+  timeClient.setUpdateInterval(SECS_IN_HR); // default 60000 => 60s. Set to once per hour
   // End Time Client //
 
   pinMode(SIGNAL_MONITOR_PIN, INPUT);
@@ -55,24 +51,15 @@ void loop() {
   bool currentPinState = digitalRead(SIGNAL_MONITOR_PIN);
   if(currentPinState != lastPinState)
   {
-    uint32_t beforeNtpRequest = millis();
-    timeClient.update();
-    uint32_t afterNtppRequest = millis();
-
-    uint32_t serverResponseTime = afterNtppRequest - beforeNtpRequest;
-    uint32_t updatedMillis = timeClient.getEpochMillis() - serverResponseTime;
+    uint32_t updatedMillis = performNtpRequestAndCalibrateMlisecs(timeClient);
 
     if (timeClient.updated())
     {
-      BYTE slopeType = 0x00;
       BYTE timeData[TIME_TO_BYTE_ARRAY_LEN];
 
       getTimeStampAsByteArray(&timeClient, timeData, updatedMillis);
 
-      if(currentPinState == HIGH) slopeType = RISING_SLOPE;
-      if(currentPinState == LOW)  slopeType = FALLING_SLOPE;
-
-      Packet trigPack(TRIGGER_TYPE, timeData, slopeType);
+      Packet trigPack(TRIGGER_TYPE, timeData, currentPinState);
       Serial.print(trigPack.buildHexStringPacket());
     }
     else
@@ -90,7 +77,7 @@ void loop() {
     Packet checkEth(ETHERNET_STATUS_CHECK_T, NO_DATA, status);
     Serial.print(checkEth.buildHexStringPacket());
 
-    if (status == LinkOFF) digitalWrite(LED_RED, HIGH);  //Light up the red led whnt the connection is broken
+    if (status == LinkOFF) digitalWrite(LED_RED, HIGH);  //Light up the red led when the connection is broken
     if (status == LinkON)  NVIC_SystemReset();           //Reset the board to try to reconnect to internet after an ethernet connection is reestablished
   }
   lastEthStatus = status;

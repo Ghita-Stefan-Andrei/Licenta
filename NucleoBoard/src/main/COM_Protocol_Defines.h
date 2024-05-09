@@ -46,4 +46,5 @@
 #define DATA_BYTE_LENGTH_NTP_S  TYPE_BYTE + NTP_STATUS                           //Number of bytes of the data payload
 #define LAST_BYTE_POSITION      DATA_BYTE_LENGTH_NTP_S - 1                       //The position of the last data byte
 #define NTP_STATUS_POSITION     LAST_BYTE_POSITION                               //The position of the NTP CLient status byte
+
 typedef uint8_t BYTE;
