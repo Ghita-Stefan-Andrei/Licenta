@@ -4,6 +4,7 @@
 #include <NTPClient_Generic.h>
 
 #define SIGNAL_MONITOR_PIN PC8
+#define ISOLATE_LAST_BYTE 0x000000FF
 #define TIME_ZONE_OFFSET_HRS (3)
 
 typedef struct
@@ -67,10 +68,10 @@ void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data, uint32_t upda
 
 void decodeIP(uint8_t* IP, uint32_t rawIP)
 {
-  IP[0] = (rawIP >>  0) & 0x000000FF;
-  IP[1] = (rawIP >>  8) & 0x000000FF;
-  IP[2] = (rawIP >> 16) & 0x000000FF;
-  IP[3] = (rawIP >> 24) & 0x000000FF;
+  IP[0] = (rawIP >>  0) & ISOLATE_LAST_BYTE;
+  IP[1] = (rawIP >>  8) & ISOLATE_LAST_BYTE;
+  IP[2] = (rawIP >> 16) & ISOLATE_LAST_BYTE;
+  IP[3] = (rawIP >> 24) & ISOLATE_LAST_BYTE;
 }
 
 uint32_t performNtpRequestAndCalibrateMlisecs(NTPClient &timeClient) 

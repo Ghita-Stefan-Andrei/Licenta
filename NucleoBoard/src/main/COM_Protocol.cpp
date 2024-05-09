@@ -88,31 +88,31 @@ void Packet::calculateCheckSum()
 
 char* Packet::buildHexStringPacket()
 {
-  const char hexDigits[] = "0123456789ABCDEF";
+    const char hexDigits[] = "0123456789ABCDEF";
 
-  uint8_t buildPacketSize = this->dataSize + EXTRA_BYTES;
-  this->buildPacket = new BYTE[buildPacketSize];
+    uint8_t buildPacketSize = this->dataSize + EXTRA_BYTES;
+    this->buildPacket = new BYTE[buildPacketSize];
 
-  this->buildPacket[FIRST_BYTE] = this->startByte;
-  this->buildPacket[SECOND_BYTE] = this->dataSize;
+    this->buildPacket[FIRST_BYTE] = this->startByte;
+    this->buildPacket[SECOND_BYTE] = this->dataSize;
 
-  for (uint8_t dataByteIndex = 0; dataByteIndex < this->dataSize; dataByteIndex++)
-  {
-      this->buildPacket[dataByteIndex + PACKET_OFFSET] = this->dataBytes[dataByteIndex];
-  }
+    for (uint8_t dataByteIndex = 0; dataByteIndex < this->dataSize; dataByteIndex++)
+    {
+        this->buildPacket[dataByteIndex + PACKET_OFFSET] = this->dataBytes[dataByteIndex];
+    }
 
-  this->buildPacket[this->dataSize + PACKET_OFFSET] = this->checkSum;
-  uint8_t finalPacketSize = 2 * buildPacketSize + 1;
-  this->builtPacket = new char[finalPacketSize];
+    this->buildPacket[this->dataSize + PACKET_OFFSET] = this->checkSum;
+    uint8_t finalPacketSize = 2 * buildPacketSize + 1;
+    this->builtPacket = new char[finalPacketSize];
 
-  for(uint8_t dataTransIndex = 0; dataTransIndex < buildPacketSize; dataTransIndex++)
-  {
-      this->builtPacket[2 * dataTransIndex] = hexDigits[(this->buildPacket[dataTransIndex] >> 4) & 0x0F];
-      this->builtPacket[2 * dataTransIndex + 1] = hexDigits[(this->buildPacket[dataTransIndex]) & 0x0F];
-  }
-  this->builtPacket[finalPacketSize - 1] = '\0';
+    for(uint8_t dataTransIndex = 0; dataTransIndex < buildPacketSize; dataTransIndex++)
+    {
+        this->builtPacket[2 * dataTransIndex] = hexDigits[(this->buildPacket[dataTransIndex] >> 4) & 0x0F];
+        this->builtPacket[2 * dataTransIndex + 1] = hexDigits[(this->buildPacket[dataTransIndex]) & 0x0F];
+    }
+    this->builtPacket[finalPacketSize - 1] = '\0';
 
-  return this->builtPacket;
+    return this->builtPacket;
 }
 
 Packet::~Packet() 

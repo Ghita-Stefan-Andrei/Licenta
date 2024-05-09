@@ -50,7 +50,7 @@ class ByteDex:
     NTP_STATUS_UPDATED     =  0xFF #Status of NTP client, if it was updated
     NTP_STATUS_NOT_UPDATED =  0x00 #Status of NTP server, if it was not updated
 
-class Format:
-    TIME_DISPLAY_FORMAT = '0>2'    #Format do display months, days, hours, minutes, seconds in a 2 digit format
+class Format: 
+    TIME_DISPLAY_FORMAT    = '0>2' #Format do display months, days, hours, minutes, seconds in a 2 digit format
     TIME_MS_DISPLAY_FORMAT = '0>3' #Format do display millisecs in a 3 digit format
-    YEAR_OFFSET = 2000             #To be added to the value of the year sent by the board to display the correct year
+    YEAR_OFFSET            = 2000  #To be added to the value of the year sent by the board to display the correct year
