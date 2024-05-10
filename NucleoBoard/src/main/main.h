@@ -52,6 +52,17 @@ ethInfo initEthernet()
   return toRet;
 }
 
+/**
+ * @brief Converts the timestamp obtained from the NTPClient into a byte array.
+ * 
+ * @param timeClient Pointer to the NTPClient object providing the timestamp information.
+ * @param data Pointer to the array where the timestamp will be stored.
+ * @param updatedMillis The updated milliseconds value used to calculate the timestamp.
+ * 
+ * @details This function extracts the year, month, day, hours, minutes, seconds, and milliseconds from the NTPClient object 
+ * and stores them in the provided byte array. The year is offset by 2000 to fit within an uint8_t, assuming the code won't be 
+ * used after the year 2255.
+ */
 void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data, uint32_t updatedMillis)
 {
   uint16_t milisecs = updatedMillis % 1000;
@@ -66,6 +77,15 @@ void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data, uint32_t upda
   data[7] = milisecs % 100; 
 }
 
+/**
+ * @brief Decodes the raw IP address into an array of bytes.
+ * 
+ * @param IP Pointer to the array where the decoded IP address will be stored.
+ * @param rawIP The raw IP address to be decoded.
+ * 
+ * @details This function takes a 32-bit raw IP address and decodes it into an array of bytes. 
+ * It extracts the individual bytes from the raw IP address and stores them in the provided byte array.
+ */
 void decodeIP(uint8_t* IP, uint32_t rawIP)
 {
   IP[0] = (rawIP >>  0) & ISOLATE_LAST_BYTE;
@@ -74,6 +94,18 @@ void decodeIP(uint8_t* IP, uint32_t rawIP)
   IP[3] = (rawIP >> 24) & ISOLATE_LAST_BYTE;
 }
 
+/**
+ * @brief Performs an NTP request and calibrates the milliseconds value.
+ * 
+ * @param timeClient Reference to the NTPClient object used to perform the NTP request.
+ * 
+ * @return The calibrated milliseconds value obtained by subtracting the server response time from the epoch milliseconds obtained from the NTPClient object.
+ * 
+ * @details This function captures the current milliseconds value before sending an NTP request using the provided NTPClient object. 
+ * It then updates the timeClient to obtain the server response time and captures the milliseconds value after the NTP request. 
+ * The server response time is calculated as the difference between the two captured milliseconds values. 
+ * Finally, the calibrated milliseconds value is obtained by subtracting the server response time from the epoch milliseconds obtained from the NTPClient object, and it is returned.
+ */
 uint32_t performNtpRequestAndCalibrateMlisecs(NTPClient &timeClient) 
 {
   uint32_t beforeNtpRequest = millis();

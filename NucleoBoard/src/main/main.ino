@@ -63,6 +63,7 @@ void loop() {
     }
     else
     {
+      //if the time client is not updated send a packet to inform the ntp time client current status
       Packet NTPStatusPack(NTP_STATUS_TYPE, NO_DATA, NTP_STATUS_NOT_UPDATED);
       Serial.print(NTPStatusPack.buildHexStringPacket());
     }

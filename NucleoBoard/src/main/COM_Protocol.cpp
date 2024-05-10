@@ -64,7 +64,10 @@ void Packet::createNTPstatusPacket(BYTE ntpStatus)
 
 Packet::Packet(const uint8_t packetType, BYTE* dataByteArr, BYTE extraByte)
 {
+    //set the Start byte to 0xAA
     this->startByte = START_BYTE;
+
+    //select the structure of the packet based on its type
     switch(packetType)
     {
         case TRIGGER_TYPE:            createTriggerPacket(dataByteArr, extraByte); break;
@@ -74,6 +77,8 @@ Packet::Packet(const uint8_t packetType, BYTE* dataByteArr, BYTE extraByte)
         case NTP_STATUS_TYPE:         createNTPstatusPacket(extraByte); break;
         default: break;
     }
+
+    //calculate check sum
     this->calculateCheckSum();
 }
 
@@ -88,25 +93,32 @@ void Packet::calculateCheckSum()
 
 char* Packet::buildHexStringPacket()
 {
+    //array to be used to convert bytes from int to char 
     const char hexDigits[] = "0123456789ABCDEF";
 
     uint8_t buildPacketSize = this->dataSize + EXTRA_BYTES;
     this->buildPacket = new BYTE[buildPacketSize];
 
+    //set the first byte of the pack to be the start byte and the second byte as the length of the data payload
     this->buildPacket[FIRST_BYTE] = this->startByte;
     this->buildPacket[SECOND_BYTE] = this->dataSize;
 
+    //copy the data bytes in the packet 
     for (uint8_t dataByteIndex = 0; dataByteIndex < this->dataSize; dataByteIndex++)
     {
         this->buildPacket[dataByteIndex + PACKET_OFFSET] = this->dataBytes[dataByteIndex];
     }
 
+    //add the checksum byte to the packet
     this->buildPacket[this->dataSize + PACKET_OFFSET] = this->checkSum;
+
+    //create a new version of the packet to convert the uint8_t to char
     uint8_t finalPacketSize = 2 * buildPacketSize + 1;
     this->builtPacket = new char[finalPacketSize];
 
     for(uint8_t dataTransIndex = 0; dataTransIndex < buildPacketSize; dataTransIndex++)
     {
+        //split the bytes from a uint8_t in 2 chars by isolating the first 4 bits and the last 4 bits
         this->builtPacket[2 * dataTransIndex] = hexDigits[(this->buildPacket[dataTransIndex] >> 4) & 0x0F];
         this->builtPacket[2 * dataTransIndex + 1] = hexDigits[(this->buildPacket[dataTransIndex]) & 0x0F];
     }

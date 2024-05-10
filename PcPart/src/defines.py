@@ -17,14 +17,14 @@ class ByteDex:
     SLOPE_BYTE_POSITION      = TIME_FIRST_BYTE_POSITION + TOTAL_TIME_BYTES #Position of the slope type byte
     NTP_STATUS_BYTE_POSITION = 3                                           #Position of the NTP status byte
 
-    YEAR    = TIME_FIRST_BYTE_POSITION + 0 #Position of the byte that tells the year in raport to TIME_FIRST_BYTE_POSITION
-    MONTH   = TIME_FIRST_BYTE_POSITION + 1 #Position of the byte that tells the month in raport to TIME_FIRST_BYTE_POSITION
-    DAY     = TIME_FIRST_BYTE_POSITION + 2 #Position of the byte that tells the day in raport to TIME_FIRST_BYTE_POSITION
-    HOUR    = TIME_FIRST_BYTE_POSITION + 3 #Position of the byte that tells the hour in raport to TIME_FIRST_BYTE_POSITION
+    YEAR    = TIME_FIRST_BYTE_POSITION + 0 #Position of the byte that tells the year   in raport to TIME_FIRST_BYTE_POSITION
+    MONTH   = TIME_FIRST_BYTE_POSITION + 1 #Position of the byte that tells the month  in raport to TIME_FIRST_BYTE_POSITION
+    DAY     = TIME_FIRST_BYTE_POSITION + 2 #Position of the byte that tells the day    in raport to TIME_FIRST_BYTE_POSITION
+    HOUR    = TIME_FIRST_BYTE_POSITION + 3 #Position of the byte that tells the hour   in raport to TIME_FIRST_BYTE_POSITION
     MINUTE  = TIME_FIRST_BYTE_POSITION + 4 #Position of the byte that tells the minute in raport to TIME_FIRST_BYTE_POSITION
     SECOND  = TIME_FIRST_BYTE_POSITION + 5 #Position of the byte that tells the second in raport to TIME_FIRST_BYTE_POSITION
-    MILS_FH = TIME_FIRST_BYTE_POSITION + 6 #FIRST  HALF OF THE NUMBER OF MILISECONDS in raport to TIME_FIRST_BYTE_POSITION
-    MILS_SH = TIME_FIRST_BYTE_POSITION + 7 #SECOND HALF OF THE NUMBER OF MILISECONDS in raport to TIME_FIRST_BYTE_POSITION
+    MILS_FH = TIME_FIRST_BYTE_POSITION + 6 #FIRST  HALF OF THE NUMBER OF MILISECONDS   in raport to TIME_FIRST_BYTE_POSITION
+    MILS_SH = TIME_FIRST_BYTE_POSITION + 7 #SECOND HALF OF THE NUMBER OF MILISECONDS   in raport to TIME_FIRST_BYTE_POSITION
 
     START_BYTE             = 0xAA #The byte that every pack must start with
     TRIGGER_BYTE           = 0xAB #Byte that tells that the pack is of type TRIGGER which includes time data and type of slope
