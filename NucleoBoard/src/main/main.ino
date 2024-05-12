@@ -1,13 +1,5 @@
 #include "main.h"
 
-EthernetUDP ntpUDP;
-NTPClient timeClient(ntpUDP);
-
-bool lastPinState = LOW;
-bool reconected = false;
-ethInfo ethInfoStatus;
-EthernetLinkStatus lastEthStatus;
-
 void setup() {
   pinMode(LED_RED,  OUTPUT);    //the RED led marks the connection to ethernet. If it is on, the board is not connected to ethernet.
   pinMode(LED_BLUE, OUTPUT);    //the BLUE led marks when the board enters the loop function
@@ -29,8 +21,12 @@ void setup() {
 
   lastEthStatus = Ethernet.linkStatus();
 
-  if (lastEthStatus == LinkON)  digitalWrite(LED_RED, LOW);
-  if (lastEthStatus == LinkOFF) digitalWrite(LED_RED, HIGH);
+  switch(lastEthStatus)
+  {
+    case LinkON : digitalWrite(LED_RED, LOW); break;
+    case LinkOFF: digitalWrite(LED_RED, HIGH); break;
+    default: break;
+  }
 
   // End Ethernet //
   timeClient.begin();
@@ -77,8 +73,12 @@ void loop() {
     Packet checkEth(ETHERNET_STATUS_CHECK_T, NO_DATA, status);
     Serial.print(checkEth.buildHexStringPacket());
 
-    if (status == LinkOFF) digitalWrite(LED_RED, HIGH);  //Light up the red led when the connection is broken
-    if (status == LinkON)  NVIC_SystemReset();           //Reset the board to try to reconnect to internet after an ethernet connection is reestablished
+    switch(status)
+    {
+      case LinkOFF: digitalWrite(LED_RED, HIGH); break;  //Light up the red led when the connection is broken
+      case LinkON : NVIC_SystemReset(); break;           //Reset the board to try to reconnect to internet after an ethernet connection is reestablished
+      default: break;
+    }
   }
   lastEthStatus = status;
 }

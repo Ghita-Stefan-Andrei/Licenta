@@ -15,10 +15,8 @@ void Packet::createTriggerPacket(BYTE* timeData, BYTE slopeType)
     this->dataSize = DATA_BYTE_LENGTH_TRIG;
     this->dataBytes[TYPE_BYTE_POSITION] = TRIGGER_TYPE;
 
-    for (uint8_t timeDataIndex = 0; timeDataIndex < TIME_TO_BYTE_ARRAY_LEN; timeDataIndex++)
-    {
-        this->dataBytes[BYTES_BEFORE_TIME_DATA + timeDataIndex] = timeData[timeDataIndex];
-    }
+    //copy timeData into the dataBytes array at the position marked by the offset
+    memcpy(this->dataBytes + BYTES_BEFORE_TIME_DATA, timeData, TIME_TO_BYTE_ARRAY_LEN);
 
     this->dataBytes[SLOPE_BYTE_POSITION] = (slopeType == HIGH) ? RISING_SLOPE : FALLING_SLOPE;
 }
@@ -38,10 +36,8 @@ void Packet::createEthernetPacket(BYTE* ipAdress, BYTE ethStatus, uint8_t type)
         this->dataSize = DATA_BYTE_LENGTH_ETH;
         this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_TYPE;
 
-        for (uint8_t ipByte = 0; ipByte < IP_BYTE_LENGTH; ipByte++)
-        {
-            this->dataBytes[BYTES_BEFORE_IP + ipByte] = ipAdress[ipByte];
-        }
+        //copy the IP adress in the dataBytes array at the position marked by the offset
+        memcpy(this->dataBytes + BYTES_BEFORE_IP, ipAdress, IP_BYTE_LENGTH);
 
         this->dataBytes[ETH_STATUS_BYTE_POS] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : ETH_NOT_CONNECTED;
     }
@@ -50,7 +46,12 @@ void Packet::createEthernetPacket(BYTE* ipAdress, BYTE ethStatus, uint8_t type)
         this->dataBytes = new BYTE[DATA_BYTE_LENGTH_ETH_C];
         this->dataSize = DATA_BYTE_LENGTH_ETH_C;
         this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_CHECK_T;
-        this->dataBytes[ETH_STATUS_BYTE_POS_C] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : (ethStatus == ETH_CONNECTION_OFF) ? ETH_NOT_CONNECTED : ETH_CONNECTION_UNKNOWN;
+        switch(ethStatus)
+        {
+            case ETH_CONNECTED:      this->dataBytes[ETH_STATUS_BYTE_POS_C] = ETH_CONNECTED; break;
+            case ETH_CONNECTION_OFF: this->dataBytes[ETH_STATUS_BYTE_POS_C] = ETH_NOT_CONNECTED; break;
+            default:                 this->dataBytes[ETH_STATUS_BYTE_POS_C] = ETH_CONNECTION_UNKNOWN; break;
+        }
     }
 }
 
@@ -79,16 +80,17 @@ Packet::Packet(const uint8_t packetType, BYTE* dataByteArr, BYTE extraByte)
     }
 
     //calculate check sum
-    this->calculateCheckSum();
+    this->checkSum = this->calculateCheckSum();
 }
 
-void Packet::calculateCheckSum()
+BYTE Packet::calculateCheckSum()
 {
-    this->checkSum = this->startByte ^ this->dataSize;
+    BYTE checkSumCalc = this->startByte ^ this->dataSize;
+
     for (uint16_t dataByteIndex = 0; dataByteIndex < this->dataSize; dataByteIndex++) 
-    {
-        this->checkSum ^= this->dataBytes[dataByteIndex];  
-    }
+        checkSumCalc ^= this->dataBytes[dataByteIndex];  
+
+    return checkSumCalc;
 }
 
 char* Packet::buildHexStringPacket()
@@ -103,11 +105,8 @@ char* Packet::buildHexStringPacket()
     this->buildPacket[FIRST_BYTE] = this->startByte;
     this->buildPacket[SECOND_BYTE] = this->dataSize;
 
-    //copy the data bytes in the packet 
-    for (uint8_t dataByteIndex = 0; dataByteIndex < this->dataSize; dataByteIndex++)
-    {
-        this->buildPacket[dataByteIndex + PACKET_OFFSET] = this->dataBytes[dataByteIndex];
-    }
+    //copy the data bytes in the packet at the position marked by the offset
+    memcpy(this->buildPacket + PACKET_OFFSET, this->dataBytes, this->dataSize);
 
     //add the checksum byte to the packet
     this->buildPacket[this->dataSize + PACKET_OFFSET] = this->checkSum;
@@ -131,5 +130,5 @@ Packet::~Packet()
 {
     delete[] this->dataBytes; 
     delete[] this->buildPacket;
-    delete[] this->builtPacket; //!warning: Object should be deconstructed after the packet was sent.
+    delete[] this->builtPacket;
 }

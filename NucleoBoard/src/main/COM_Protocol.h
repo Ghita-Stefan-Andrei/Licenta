@@ -58,16 +58,13 @@ class Packet
     void createNTPstatusPacket(BYTE ntpStatus);
 
     /**
-      * @brief Calculates the checksum for the packet.
-      * 
-      * Initializes the checksum with the value of startByte, then applies XOR between the current checksum 
-      * and each data byte in the packet, updating the checksum.
-      * 
-      * This method updates the 'checkSum' member of the class.
+      * @brief Calculates the checksum of the packet.
       *
-      * @note This method has no input parameters and does not return a value, it only updates the internal state of the Packet object.
+      * The checksum is calculated by XORing the start byte, data size, and each data byte.
+      *
+      * @return The calculated checksum byte.
       */
-    void calculateCheckSum();
+    BYTE calculateCheckSum();
 
   public:
     /**
