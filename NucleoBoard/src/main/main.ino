@@ -4,8 +4,8 @@ void setup() {
   pinMode(LED_RED,  OUTPUT);    //the RED led marks the connection to ethernet. If it is on, the board is not connected to ethernet.
   pinMode(LED_BLUE, OUTPUT);    //the BLUE led marks when the board enters the loop function
 
-  Serial.begin(115200);
-  while (!Serial && millis() < 5000);
+  Serial.begin(BIT_RATE);
+  while (!Serial && millis() < SERIAL_OPEN_TIMEOUT);
   
   Packet bootPack(BOOT_TYPE);
   Serial.print(bootPack.buildHexStringPacket());
@@ -30,7 +30,7 @@ void setup() {
 
   // End Ethernet //
   timeClient.begin();
-  timeClient.setTimeOffset(3600 * TIME_ZONE_OFFSET_HRS);
+  timeClient.setTimeOffset(SECONDS_IN_HOUR * TIME_ZONE_OFFSET_HRS);
   timeClient.setUpdateInterval(SECS_IN_HR); // default 60000 => 60s. Set to once per hour
   // End Time Client //
 
