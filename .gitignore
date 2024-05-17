@@ -1,5 +1,6 @@
 .vscode
 build
 PcPart/serialSettings.txt
-PcPart/App
+PcPart/App/build
+PcPart/App/*.spec
 PcPart/src/__pycache__
