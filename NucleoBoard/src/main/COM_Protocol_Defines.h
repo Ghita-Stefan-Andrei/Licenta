@@ -1,10 +1,10 @@
 //PACK STRUCTURE CONFIGS
 #define START_BYTE              0xAA                                             //The byte that represent the start of the pack, every pack should start with this exact byte
 #define TYPE_BYTE               1                                                //How many bytes to mark the type of a pack (used to calculate data lengths and last positions)
-#define EXTRA_BYTES             (uint8_t)3                                       //Number of bytes that are not data bytes (START_BYTE, LENGTH_BYTE, CHECK_SUM_BYTE)
-#define PACKET_OFFSET           EXTRA_BYTES - 1                                  //The bytes before the data bytes in a pack
-#define FIRST_BYTE              0                                                //The first position in the packet, used to write the START_BYTE 0xAA
-#define SECOND_BYTE             1                                                //The second position in the packet, used to write the length of the data in the pack
+#define NON_DATA_BYTE_COUNT     (uint8_t)3                                       //Number of bytes that are not data bytes (START_BYTE, LENGTH_BYTE, CHECK_SUM_BYTE)
+#define PACKET_HEADER_SIZE      NON_DATA_BYTE_COUNT - 1                          //The bytes before the data bytes in a pack
+#define START_BYTE_POSITION     0                                                //The first position in the packet, used to write the START_BYTE 0xAA
+#define LENGTH_BYTE_POSITION    1                                                //The second position in the packet, used to write the length of the data in the pack
 #define TYPE_BYTE_POSITION      0                                                //Position of the packet type byte in the data array
 #define NO_DATA                 {}                                               //Used for clarity if sending a packet with an extraDataByte and no aditional data
 
@@ -12,10 +12,10 @@
 #define TRIGGER_TYPE            0xAB                                             //Type of packet that tells when the signal changed state
 #define RISING_SLOPE            0x01                                             //Byte marking that the signal went from 0 to 1
 #define FALLING_SLOPE           0x10                                             //Byte marking that the signal went from 1 to 0
-#define TIME_TO_BYTE_ARRAY_LEN  8                                                //number of time data bytes
+#define TIME_DATA_BYTE_COUNT    8                                                //number of time data bytes
 #define SLOPE_BYTE              1                                                //number of slope data bytes
 #define BYTES_BEFORE_TIME_DATA  TYPE_BYTE                                        //number of bytes before time data bytes
-#define DATA_BYTE_LENGTH_TRIG   TYPE_BYTE + TIME_TO_BYTE_ARRAY_LEN + SLOPE_BYTE  //total number of data bytes (type + time + slope)
+#define DATA_BYTE_LENGTH_TRIG   TYPE_BYTE + TIME_DATA_BYTE_COUNT + SLOPE_BYTE  //total number of data bytes (type + time + slope)
 #define LAST_DATA_BYTE_TRIG     DATA_BYTE_LENGTH_TRIG - 1                        //Position of the last byte in trigg data array
 #define SLOPE_BYTE_POSITION     LAST_DATA_BYTE_TRIG                              //Position of the byte that indicates the slope type
 

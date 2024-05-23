@@ -50,7 +50,7 @@ void loop() {
     if (timeClient.updated())
     {
       //get time stamp
-      BYTE timeData[TIME_TO_BYTE_ARRAY_LEN];
+      BYTE timeData[TIME_DATA_BYTE_COUNT];
       getTimeStampAsByteArray(&timeClient, timeData, updatedMillis);
 
       //send packet with timestamp and slope type

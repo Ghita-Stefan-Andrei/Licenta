@@ -16,7 +16,7 @@ void Packet::createTriggerPacket(BYTE* timeData, BYTE slopeType)
     this->dataBytes[TYPE_BYTE_POSITION] = TRIGGER_TYPE;
 
     //copy timeData into the dataBytes array at the position marked by the offset
-    memcpy(this->dataBytes + BYTES_BEFORE_TIME_DATA, timeData, TIME_TO_BYTE_ARRAY_LEN);
+    memcpy(this->dataBytes + BYTES_BEFORE_TIME_DATA, timeData, TIME_DATA_BYTE_COUNT);
 
     this->dataBytes[SLOPE_BYTE_POSITION] = (slopeType == HIGH) ? RISING_SLOPE : FALLING_SLOPE;
 }
@@ -98,18 +98,18 @@ char* Packet::buildHexStringPacket()
     //array to be used to convert bytes from int to char 
     const char hexDigits[] = "0123456789ABCDEF";
 
-    uint8_t buildPacketSize = this->dataSize + EXTRA_BYTES;
+    uint8_t buildPacketSize = this->dataSize + NON_DATA_BYTE_COUNT;
     this->buildPacket = new BYTE[buildPacketSize];
 
     //set the first byte of the pack to be the start byte and the second byte as the length of the data payload
-    this->buildPacket[FIRST_BYTE] = this->startByte;
-    this->buildPacket[SECOND_BYTE] = this->dataSize;
+    this->buildPacket[START_BYTE_POSITION] = this->startByte;
+    this->buildPacket[LENGTH_BYTE_POSITION] = this->dataSize;
 
     //copy the data bytes in the packet at the position marked by the offset
-    memcpy(this->buildPacket + PACKET_OFFSET, this->dataBytes, this->dataSize);
+    memcpy(this->buildPacket + PACKET_HEADER_SIZE, this->dataBytes, this->dataSize);
 
     //add the checksum byte to the packet
-    this->buildPacket[this->dataSize + PACKET_OFFSET] = this->checkSum;
+    this->buildPacket[this->dataSize + PACKET_HEADER_SIZE] = this->checkSum;
 
     //create a new version of the packet to convert the uint8_t to char
     uint8_t finalPacketSize = 2 * buildPacketSize + 1;
