@@ -70,7 +70,7 @@ void loop() {
   EthernetLinkStatus status = Ethernet.linkStatus();
   if (status != lastEthStatus)
   {
-    Packet checkEth(ETHERNET_STATUS_CHECK_T, NO_DATA, status);
+    Packet checkEth(ETHERNET_CONNECTION_CHECK_TYPE , NO_DATA, status);
     Serial.print(checkEth.buildHexStringPacket());
 
     switch(status)

@@ -37,20 +37,20 @@ void Packet::createEthernetPacket(BYTE* ipAdress, BYTE ethStatus, uint8_t type)
         this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_TYPE;
 
         //copy the IP adress in the dataBytes array at the position marked by the offset
-        memcpy(this->dataBytes + BYTES_BEFORE_IP, ipAdress, IP_BYTE_LENGTH);
+        memcpy(this->dataBytes + HEADER_BYTE_COUNT_ETH, ipAdress, IP_BYTE_LENGTH);
 
-        this->dataBytes[ETH_STATUS_BYTE_POS] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : ETH_NOT_CONNECTED;
+        this->dataBytes[ETH_STATUS_BYTE_POS] = (ethStatus == ETH_CONNECTED) ? ETH_CONNECTED : ETHERNET_DISCONNECTED                ;
     }
-    else if (type == ETHERNET_STATUS_CHECK_T)
+    else if (type == ETHERNET_CONNECTION_CHECK_TYPE )
     {
-        this->dataBytes = new BYTE[DATA_BYTE_LENGTH_ETH_C];
-        this->dataSize = DATA_BYTE_LENGTH_ETH_C;
-        this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_STATUS_CHECK_T;
+        this->dataBytes = new BYTE[ETHERNET_CHECK_DATA_BYTE_COUNT       ];
+        this->dataSize = ETHERNET_CHECK_DATA_BYTE_COUNT       ;
+        this->dataBytes[TYPE_BYTE_POSITION] = ETHERNET_CONNECTION_CHECK_TYPE ;
         switch(ethStatus)
         {
-            case ETH_CONNECTED:      this->dataBytes[ETH_STATUS_BYTE_POS_C] = ETH_CONNECTED; break;
-            case ETH_CONNECTION_OFF: this->dataBytes[ETH_STATUS_BYTE_POS_C] = ETH_NOT_CONNECTED; break;
-            default:                 this->dataBytes[ETH_STATUS_BYTE_POS_C] = ETH_CONNECTION_UNKNOWN; break;
+            case ETH_CONNECTED:      this->dataBytes[ETHERNET_CHECK_STATUS_POSITION] = ETH_CONNECTED; break;
+            case ETH_CONNECTION_OFF: this->dataBytes[ETHERNET_CHECK_STATUS_POSITION] = ETHERNET_DISCONNECTED                ; break;
+            default:                 this->dataBytes[ETHERNET_CHECK_STATUS_POSITION] = ETH_CONNECTION_UNKNOWN; break;
         }
     }
 }
@@ -74,7 +74,7 @@ Packet::Packet(const uint8_t packetType, BYTE* dataByteArr, BYTE extraByte)
         case TRIGGER_TYPE:            createTriggerPacket(dataByteArr, extraByte); break;
         case BOOT_TYPE:               createBootPacket(); break;
         case ETHERNET_STATUS_TYPE:    createEthernetPacket(dataByteArr, extraByte, packetType); break;
-        case ETHERNET_STATUS_CHECK_T: createEthernetPacket(dataByteArr, extraByte, packetType); break;
+        case ETHERNET_CONNECTION_CHECK_TYPE : createEthernetPacket(dataByteArr, extraByte, packetType); break;
         case NTP_STATUS_TYPE:         createNTPstatusPacket(extraByte); break;
         default: break;
     }
