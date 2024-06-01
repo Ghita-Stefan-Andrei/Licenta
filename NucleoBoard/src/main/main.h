@@ -5,7 +5,6 @@
 #include <NTPClient_Generic.h>
 
 #define SIGNAL_MONITOR_PIN PC8
-#define ISOLATE_LAST_BYTE 0x000000FF
 #define TIME_ZONE_OFFSET_HRS (3)
 #define BIT_RATE 115200
 #define SERIAL_OPEN_TIMEOUT 5000
@@ -19,6 +18,7 @@ bool reconected = false;
 ethInfo ethInfoStatus;
 EthernetLinkStatus lastEthStatus;
 EthernetModule ethModule;
+LedDriver ledDriver;
 
 /**
  * @brief Initializes the Ethernet connection and retrieves the IP address status.
@@ -54,9 +54,9 @@ ethInfo initEthernet()
  * and stores them in the provided byte array. The year is offset by 2000 to fit within an uint8_t, assuming the code won't be 
  * used after the year 2255.
  */
-void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data, uint32_t updatedMillis)
+void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data, uint32_t responseTime)
 {
-  uint16_t milisecs = updatedMillis % 1000;
+  uint16_t milisecs = (timeClient->getEpochMillis() - responseTime) % 1000;
 
   data[0] = timeClient->getYear() - 2000; //to get a value to fit in an uint8_t assuming this code wont be used after the year 2255
   data[1] = timeClient->getMonth();
@@ -66,23 +66,6 @@ void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data, uint32_t upda
   data[5] = timeClient->getSeconds();
   data[6] = milisecs / 100;
   data[7] = milisecs % 100; 
-}
-
-/**
- * @brief Decodes the raw IP address into an array of bytes.
- * 
- * @param IP Pointer to the array where the decoded IP address will be stored.
- * @param rawIP The raw IP address to be decoded.
- * 
- * @details This function takes a 32-bit raw IP address and decodes it into an array of bytes. 
- * It extracts the individual bytes from the raw IP address and stores them in the provided byte array.
- */
-void decodeIP(uint8_t* IP, uint32_t rawIP)
-{
-  IP[0] = (rawIP >>  0) & ISOLATE_LAST_BYTE;
-  IP[1] = (rawIP >>  8) & ISOLATE_LAST_BYTE;
-  IP[2] = (rawIP >> 16) & ISOLATE_LAST_BYTE;
-  IP[3] = (rawIP >> 24) & ISOLATE_LAST_BYTE;
 }
 
 /**
@@ -97,12 +80,12 @@ void decodeIP(uint8_t* IP, uint32_t rawIP)
  * The server response time is calculated as the difference between the two captured milliseconds values. 
  * Finally, the calibrated milliseconds value is obtained by subtracting the server response time from the epoch milliseconds obtained from the NTPClient object, and it is returned.
  */
-uint32_t performNtpRequestAndCalibrateMlisecs(NTPClient &timeClient) 
+uint32_t performNtpRequestAndGetResponseTime(NTPClient &timeClient) 
 {
   uint32_t beforeNtpRequest = millis();
   timeClient.update();
   uint32_t afterNtpRequest = millis();
 
   uint32_t serverResponseTime = afterNtpRequest - beforeNtpRequest;
-  return timeClient.getEpochMillis() - serverResponseTime;
+  return serverResponseTime;
 }

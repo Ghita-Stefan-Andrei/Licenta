@@ -1,9 +1,8 @@
 #include "main.h"
 
 void setup() {
-  pinMode(LED_RED,  OUTPUT);    //the RED led marks the connection to ethernet. If it is on, the board is not connected to ethernet.
-  pinMode(LED_BLUE, OUTPUT);    //the BLUE led marks when the board enters the loop function
-
+  ledDriver.init();
+   
   Serial.begin(BIT_RATE);
   while (!Serial && millis() < SERIAL_OPEN_TIMEOUT);
   
@@ -13,20 +12,14 @@ void setup() {
   // Ethernet
   ethInfoStatus = initEthernet();
 
-  uint8_t ip[IP_BYTE_LENGTH];
-  decodeIP(ip, ethInfoStatus.ip);
+  ethModule.decodeIP(ethInfoStatus.ip);
 
-  Packet ethPack(ETHERNET_STATUS_TYPE, ip, ethInfoStatus.status);
+  Packet ethPack(ETHERNET_STATUS_TYPE, ethModule.getIPAddress(), ethInfoStatus.status);
   Serial.print(ethPack.buildHexStringPacket());
 
   ethModule.setLastStatus(Ethernet.linkStatus());
 
-  switch(lastEthStatus)
-  {
-    case LinkON : digitalWrite(LED_RED, LOW); break;
-    case LinkOFF: digitalWrite(LED_RED, HIGH); break;
-    default: break;
-  }
+  ledDriver.displayEthStatus(ethModule.getLastStatus());
 
   // End Ethernet //
   timeClient.begin();
@@ -37,7 +30,7 @@ void setup() {
   pinMode(SIGNAL_MONITOR_PIN, INPUT);
   lastPinState = digitalRead(SIGNAL_MONITOR_PIN);
 
-  digitalWrite(LED_BLUE, HIGH);
+  LedDriver::enteredLoopLed();
 }
 
 // the loop function runs over and over again forever
@@ -45,14 +38,14 @@ void loop() {
   bool currentPinState = digitalRead(SIGNAL_MONITOR_PIN);
   if(currentPinState != lastPinState)
   {
-    uint32_t updatedMillis = performNtpRequestAndCalibrateMlisecs(timeClient);
-
+    uint32_t responseTime = performNtpRequestAndGetResponseTime(timeClient);
+  
     if (timeClient.updated())
     {
       //get time stamp
       BYTE timeData[TIME_DATA_BYTE_COUNT];
-      getTimeStampAsByteArray(&timeClient, timeData, updatedMillis);
-
+      getTimeStampAsByteArray(&timeClient, timeData, responseTime);
+  
       //send packet with timestamp and slope type
       Packet trigPack(TRIGGER_TYPE, timeData, currentPinState);
       Serial.print(trigPack.buildHexStringPacket());
@@ -65,14 +58,14 @@ void loop() {
     }
   }
   lastPinState = currentPinState;
-  
+    
   //Check physical connection to ethernet
   ethModule.updateLinkStatus(Ethernet.linkStatus());
   if (ethModule.ethStatusChanged())
   {
     Packet checkEth(ETHERNET_CONNECTION_CHECK_TYPE , NO_DATA, ethModule.getStatus());
     Serial.print(checkEth.buildHexStringPacket());
-
+  
     ethModule.handleEthernetConnectionChanges();
   }
   ethModule.setLastStatus(ethModule.getStatus());
