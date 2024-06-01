@@ -19,7 +19,7 @@ void setup() {
   Packet ethPack(ETHERNET_STATUS_TYPE, ip, ethInfoStatus.status);
   Serial.print(ethPack.buildHexStringPacket());
 
-  lastEthStatus = Ethernet.linkStatus();
+  ethModule.setLastStatus(Ethernet.linkStatus());
 
   switch(lastEthStatus)
   {
@@ -67,18 +67,13 @@ void loop() {
   lastPinState = currentPinState;
   
   //Check physical connection to ethernet
-  EthernetLinkStatus status = Ethernet.linkStatus();
-  if (status != lastEthStatus)
+  ethModule.updateLinkStatus(Ethernet.linkStatus());
+  if (ethModule.ethStatusChanged())
   {
-    Packet checkEth(ETHERNET_CONNECTION_CHECK_TYPE , NO_DATA, status);
+    Packet checkEth(ETHERNET_CONNECTION_CHECK_TYPE , NO_DATA, ethModule.getStatus());
     Serial.print(checkEth.buildHexStringPacket());
 
-    switch(status)
-    {
-      case LinkOFF: digitalWrite(LED_RED, HIGH); break;  //Light up the red led when the connection is broken
-      case LinkON : NVIC_SystemReset(); break;           //Reset the board to try to reconnect to internet after an ethernet connection is reestablished
-      default: break;
-    }
+    ethModule.handleEthernetConnectionChanges();
   }
-  lastEthStatus = status;
+  ethModule.setLastStatus(ethModule.getStatus());
 }

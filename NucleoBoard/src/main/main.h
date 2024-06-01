@@ -1,6 +1,7 @@
 #pragma once
 #include "defines.h"
 #include "COM_Protocol.h"
+#include "ETH_Module.h"
 #include <NTPClient_Generic.h>
 
 #define SIGNAL_MONITOR_PIN PC8
@@ -10,12 +11,6 @@
 #define SERIAL_OPEN_TIMEOUT 5000
 #define SECONDS_IN_HOUR 3600
 
-typedef struct
-{
-  bool status;
-  uint32_t ip;
-}ethInfo;
-
 EthernetUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
 
@@ -23,6 +18,7 @@ bool lastPinState = LOW;
 bool reconected = false;
 ethInfo ethInfoStatus;
 EthernetLinkStatus lastEthStatus;
+EthernetModule ethModule;
 
 /**
  * @brief Initializes the Ethernet connection and retrieves the IP address status.
