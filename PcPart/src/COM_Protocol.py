@@ -185,8 +185,10 @@ class InterpretPacket:
                  If the packet type is unknown, it returns a message indicating the unknown packet type.
         """
         decodedData = ''
+        justTime = ''
         if self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.TRIGGER_BYTE:
             decodedData = self.decodeTriggerPacket(packet)
+            justTime = decodedData[19:31].split(':')
 
         elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.BOOT_BYTE:
             decodedData = f'Board booted up\nPacket: {packet}\n'
@@ -203,7 +205,7 @@ class InterpretPacket:
         else:
             decodedData = f"Unknown packet type: {hex(self.individualBytes[ByteDex.TYPE_BYTE_POSITION])[2:].upper()}"
         
-        return decodedData
+        return decodedData, justTime
 
 def getSerialSettings(consoleXfile, filePath):
     """

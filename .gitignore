@@ -4,3 +4,4 @@ PcPart/serialSettings.txt
 PcPart/App/build
 PcPart/App/*.spec
 PcPart/src/__pycache__
+Measurement
