@@ -4,7 +4,7 @@
 #include "ETH_Module.h"
 #include <NTPClient_Generic.h>
 
-#define SIGNAL_MONITOR_PIN PC8
+#define SIGNAL_MONITOR_PIN D13
 #define TIME_ZONE_OFFSET_HRS (3)
 #define BIT_RATE 115200
 #define SERIAL_OPEN_TIMEOUT 5000
@@ -58,12 +58,12 @@ void getTimeStampAsByteArray(NTPClient* timeClient, uint8_t* data, uint32_t resp
 {
   uint16_t milisecs = (timeClient->getEpochMillis() - responseTime) % 1000;
 
-  data[0] = timeClient->getYear() - 2000; //to get a value to fit in an uint8_t assuming this code wont be used after the year 2255
-  data[1] = timeClient->getMonth();
-  data[2] = timeClient->getDay();
-  data[3] = timeClient->getHours();
-  data[4] = timeClient->getMinutes();
   data[5] = timeClient->getSeconds();
+  data[4] = timeClient->getMinutes();
+  data[3] = timeClient->getHours();
+  data[2] = timeClient->getDay();
+  data[1] = timeClient->getMonth();
+  data[0] = timeClient->getYear() - 2000; // to get a value to fit in an uint8_t assuming this code won't be used after the year 2255
   data[6] = milisecs / 100;
   data[7] = milisecs % 100; 
 }
