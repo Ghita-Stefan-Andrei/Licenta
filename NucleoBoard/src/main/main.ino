@@ -19,7 +19,7 @@ void setup() {
 
   ethModule.setLastStatus(Ethernet.linkStatus());
 
-  ledDriver.displayEthStatus(ethModule.getLastStatus());
+  LedDriver::displayEthStatus(ethModule.getLastStatus());
 
   // End Ethernet //
   timeClient.begin();
