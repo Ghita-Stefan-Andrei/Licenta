@@ -118,12 +118,28 @@ class InterpretPacket:
         milsFH = self.individualBytes[ByteDex.MILS_FH] 
         milsSH = self.individualBytes[ByteDex.MILS_SH] 
 
+       #slope = (
+       #        'Rising Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
+       #        'Falling Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
+       #        "Error: Slope byte missing/wrong."
+       #        )
+        
         slope = (
-                'Rising Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
-                'Falling Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
-                "Error: Slope byte missing/wrong."
+                '1' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
+                '0' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
+                "-1"
                 )
 
+        return [
+                f"{day:{Format.TIME_DISPLAY_FORMAT}}",
+                f"{month:{Format.TIME_DISPLAY_FORMAT}}",
+                f"{year}",
+                f"{hour:{Format.TIME_DISPLAY_FORMAT}}",
+                f"{minute:{Format.TIME_DISPLAY_FORMAT}}",
+                f"{second:{Format.TIME_DISPLAY_FORMAT}}",
+                f"{milsFH * 100 + milsSH:{Format.TIME_MS_DISPLAY_FORMAT}}",
+                f"{slope}"
+               ]
         return (
                 f"Change detected at {hour:{Format.TIME_DISPLAY_FORMAT}}:"
                 f"{minute:{Format.TIME_DISPLAY_FORMAT}}:"
@@ -187,8 +203,8 @@ class InterpretPacket:
         decodedData = ''
         justTime = ''
         if self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.TRIGGER_BYTE:
-            decodedData = self.decodeTriggerPacket(packet)
-            justTime = decodedData[19:31].split(':')
+            decodedData = ''
+            justTime = self.decodeTriggerPacket(packet)
 
         elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.BOOT_BYTE:
             decodedData = f'Board booted up\nPacket: {packet}\n'

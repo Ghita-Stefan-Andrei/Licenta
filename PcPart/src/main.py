@@ -41,10 +41,11 @@ while True:
         #if the checksum is valid, decode the packet and output the information sent by the board
         if decoder.checkSumCheck(packet) == StatusLog.VALID_CHECK_SUM:
             msg, justTime = decoder.decodePacket(packet)
-            print(msg)
-            with open("C:\\Users\\Asus\\Desktop\\ProiectLicenta\\Measurement\\triggerTime.csv", "a", newline="") as csvFile:
-                csvWriter = csv.writer(csvFile)
-                csvWriter.writerow(justTime)
+            print(msg, end="")
+            if justTime != "":
+                with open("C:\\Users\\Asus\\Desktop\\ProiectLicenta\\Measurement\\triggerTime.csv", "a", newline="") as csvFile:
+                    csvWriter = csv.writer(csvFile)
+                    csvWriter.writerow(justTime)
 
         elif decoder.checkSumCheck(packet) == StatusLog.INVALID_CHECK_SUM:
             print('Error: Invalid check sum')
