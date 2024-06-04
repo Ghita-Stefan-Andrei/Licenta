@@ -9,18 +9,18 @@ void LedDriver::displayEthStatus(const EthernetLinkStatus& ethStatus)
 {
     switch(ethStatus)
     {
-        case LinkON: closeEtcConLed(); break;
-        case LinkOFF: openEtcConLed(); break;
+        case LinkON: closeEthConLed(); break;
+        case LinkOFF: openEthConLed(); break;
         default: break;
     }
 }
 
-void LedDriver::closeEtcConLed()
+void LedDriver::closeEthConLed()
 {
     digitalWrite(ETH_CONNECTION_LED, LOW);
 }
 
-void LedDriver::openEtcConLed()
+void LedDriver::openEthConLed()
 {
     digitalWrite(ETH_CONNECTION_LED, HIGH);
 }

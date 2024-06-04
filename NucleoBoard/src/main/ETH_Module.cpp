@@ -29,7 +29,7 @@ void EthernetModule::handleEthernetConnectionChanges()
 {
     switch(status)
     {
-        case LinkOFF: LedDriver::openEtcConLed();  break;  // Light up the red LED when the connection is broken
+        case LinkOFF: LedDriver::openEthConLed();  break;  // Light up the red LED when the connection is broken
         case LinkON : NVIC_SystemReset(); break;  // Reset the board to try to reconnect to the internet after an Ethernet connection is reestablished
         default:break;
     }
