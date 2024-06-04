@@ -11,7 +11,7 @@ class LedDriver
 
     public:
         void init();
-        void displayEthStatus(const EthernetLinkStatus& ethStatus);
+        static void displayEthStatus(const EthernetLinkStatus& ethStatus);
         static void closeEtcConLed();
         static void openEtcConLed();
         static void enteredLoopLed();
