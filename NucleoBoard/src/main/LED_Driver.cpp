@@ -13,26 +13,25 @@ void LedDriver::init()
 
 void LedDriver::displayEthStatus(const EthernetLinkStatus& ethStatus)
 {
-    if (this->initialized)
-        switch(ethStatus)
-        {
-            case LinkON: closeEthConLed(); break;
-            case LinkOFF: openEthConLed(); break;
-            default: break;
-        }
+    switch(ethStatus)
+    {
+        case LinkON: closeEthConLed(); break;
+        case LinkOFF: openEthConLed(); break;
+        default: break;
+    }
 }
 
 void LedDriver::closeEthConLed()
 {
-    if (this->initialized) digitalWrite(ETH_CONNECTION_LED, LOW);
+    digitalWrite(ETH_CONNECTION_LED, LOW);
 }
 
 void LedDriver::openEthConLed()
 {
-    if (this->initialized) digitalWrite(ETH_CONNECTION_LED, HIGH);
+    digitalWrite(ETH_CONNECTION_LED, HIGH);
 }
 
 void LedDriver::enteredLoopLed()
 {
-    if (this->initialized) digitalWrite(LOOP_FUNCTION_ACTIVE_LED, HIGH);
+    digitalWrite(LOOP_FUNCTION_ACTIVE_LED, HIGH);
 }
