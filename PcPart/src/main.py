@@ -9,6 +9,7 @@ import csv
 args = CLArguments.createCLArguments()
 
 com, bitRate = getSerialSettings(args.source, args.filePath)
+outputType = args.outputType
 
 decoder = InP()
 
@@ -40,7 +41,7 @@ while True:
         
         #if the checksum is valid, decode the packet and output the information sent by the board
         if decoder.checkSumCheck(packet) == StatusLog.VALID_CHECK_SUM:
-            msg, justTime = decoder.decodePacket(packet)
+            msg, justTime = decoder.decodePacket(packet, outputType)
             print(msg, end="")
             if justTime != "":
                 with open("C:\\Users\\Asus\\Desktop\\ProiectLicenta\\Measurement\\triggerTime.csv", "a", newline="") as csvFile:

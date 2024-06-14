@@ -99,7 +99,7 @@ class InterpretPacket:
             return f"Connected to ethernet.\nIP:{ipFirstByte}.{ipSecondByte}.{ipThirdByte}.{ipForthByte}\nPacket: {packet}\n"
 
 
-    def decodeTriggerPacket(self, packet):
+    def decodeTriggerPacket(self, packet, outputType):
         """
         Decodes the trigger packet and extracts relevant information such as timestamp and slope type.
 
@@ -118,19 +118,13 @@ class InterpretPacket:
         milsFH = self.individualBytes[ByteDex.MILS_FH] 
         milsSH = self.individualBytes[ByteDex.MILS_SH] 
 
-       #slope = (
-       #        'Rising Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
-       #        'Falling Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
-       #        "Error: Slope byte missing/wrong."
-       #        )
-        
-        slope = (
-                '1' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
-                '0' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
-                "-1"
-                )
-
-        return [
+        if outputType == "csv":
+            slope = (
+                    '1' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
+                    '0' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
+                    "-1"
+                    )
+            return [
                 f"{day:{Format.TIME_DISPLAY_FORMAT}}",
                 f"{month:{Format.TIME_DISPLAY_FORMAT}}",
                 f"{year}",
@@ -140,7 +134,13 @@ class InterpretPacket:
                 f"{milsFH * 100 + milsSH:{Format.TIME_MS_DISPLAY_FORMAT}}",
                 f"{slope}"
                ]
-        return (
+        else:
+            slope = (
+                    'Rising Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
+                    'Falling Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
+                    "Error: Slope byte missing/wrong."
+                    )
+            return (
                 f"Change detected at {hour:{Format.TIME_DISPLAY_FORMAT}}:"
                 f"{minute:{Format.TIME_DISPLAY_FORMAT}}:"
                 f"{second:{Format.TIME_DISPLAY_FORMAT}}:"
@@ -151,7 +151,7 @@ class InterpretPacket:
                 f"Slope type: {slope}\n"
                 f"Packet: {packet}\n"
                )
-    
+      
     def decodeEthCheckPacket(self, packet):
         """
         Decodes the Ethernet check packet and determines the status of the Ethernet connection.
@@ -185,7 +185,7 @@ class InterpretPacket:
 
         return status
 
-    def decodePacket(self, packet):
+    def decodePacket(self, packet, outputType):
         """
         Decodes the packet based on its type and returns the decoded data.
 
@@ -203,8 +203,12 @@ class InterpretPacket:
         decodedData = ''
         justTime = ''
         if self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.TRIGGER_BYTE:
-            decodedData = ''
-            justTime = self.decodeTriggerPacket(packet)
+            if outputType == "csv":
+                decodedData = ''
+                justTime = self.decodeTriggerPacket(packet, outputType)
+            else:
+                decodedData = self.decodeTriggerPacket(packet, outputType)
+                justTime = ''
 
         elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.BOOT_BYTE:
             decodedData = f'Board booted up\nPacket: {packet}\n'
