@@ -8,54 +8,56 @@
 class LedDriver
 {
     private:
-        bool initialized;
+        static bool initialized;
     public:
+
         /**
-          * @brief Constructor for LedDriver class.
+          * @brief Constructor pentru clasa LedDriver.
           *
-          * Initializes the LedDriver object and sets the initialized flag to false.
+          * Inițializează obiectul LedDriver și setează flag-ul initialized la false.
           *
-          * @return None
+          * @return Nimic
           */
         LedDriver();
 
        /**
-         * @brief Initializes the LED pins for the Ethernet and Loop Function status.
+         * @brief Inițializează pinii LED pentru starea Ethernet și funcția loop.
          *
-         * This function sets the pin modes for the LED pins to OUTPUT. The ETH_CONNECTION_LED
-         * is used to indicate the connection status to the Ethernet. If the LED is on, the board
-         * is not connected to Ethernet. The LOOP_FUNCTION_ACTIVE_LED is used to indicate when
-         * the board enters the loop function.
+         * Această funcție setează modurile pinilor LED la OUTPUT. ETH_CONNECTION_LED
+         * este folosit pentru a indica starea conexiunii la Ethernet. Dacă LED-ul este aprins, placa
+         * nu este conectată la Ethernet. LOOP_FUNCTION_ACTIVE_LED este folosit pentru a indica
+         * când placa intră în funcția loop.
          *
          * @return void
          */
         void init();
+        
         /**
-          * @brief This function is used to display the Ethernet link status on the LED.
+          * @brief Această funcție este folosită pentru a afișa starea conexiunii Ethernet pe LED.
           *
-          * @param ethStatus The current Ethernet link status.
+          * @param ethStatus Starea curentă a conexiunii Ethernet.
           *
           * @return void
           *
-          * @details This function takes the Ethernet link status as input and
-          *          controls the LED accordingly. If the link status is LinkON,
-          *          the Ethernet connection LED is turned off. If the link status
-          *          is LinkOFF, the Ethernet connection LED is turned on.
-          *          If the link status is neither LinkON nor LinkOFF, no action is taken.
+          * @details Această funcție primește starea conexiunii Ethernet ca intrare și
+          *          controlează LED-ul corespunzător. Dacă starea conexiunii este LinkON,
+          *          LED-ul de conexiune Ethernet este stins. Dacă starea conexiunii este
+          *          LinkOFF, LED-ul de conexiune Ethernet este aprins. Dacă starea conexiunii
+          *          nu este nici LinkON, nici LinkOFF, nu se întâmplă nimic.
           */
         static void displayEthStatus(const EthernetLinkStatus& ethStatus);
 
         /**
-          * @brief Closes the Ethernet connection LED.
+          * @brief Închide LED-ul conexiunii Ethernet.
           *
-          * This function sets the pin connected to the Ethernet connection LED to low,
-          * effectively turning it off. This indicates that the board is connected to the
+          * Această funcție setează pinul conectat la LED-ul de conexiune Ethernet la nivel scăzut,
+          * efectiv stingându-l. Acest lucru indică că placa este conectată la
           * Ethernet.
           *
           * @return void
           *
-          * @note This function should only be called after the LedDriver has been
-          * initialized using the init() method.
+          * @note Această funcție ar trebui apelată doar după ce LedDriver a fost
+          * inițializat folosind metoda init().
           *
           * @see init()
           * @see openEthConLed()
@@ -63,14 +65,14 @@ class LedDriver
         static void closeEthConLed();
 
         /**
-          * @brief Function to turn on the Ethernet connection LED.
+          * @brief Funcție pentru a porni LED-ul de conexiune Ethernet.
           *
-          * This function sets the pin connected to the Ethernet connection LED to HIGH,
-          * indicating that the board is not connected to the Ethernet.
+          * Această funcție setează pinul conectat la LED-ul de conexiune Ethernet la nivel înalt,
+          * indicând că placa nu este conectată la Ethernet.
           *
           * @return void
           *
-          * @note This function should be called only after the LedDriver object has been initialized.
+          * @note Această funcție ar trebui apelată doar după ce obiectul LedDriver a fost inițializat.
           *
           * @see init()
           * @see closeEthConLed()
@@ -78,9 +80,9 @@ class LedDriver
         static void openEthConLed();
 
         /**
-          * @brief Function to indicate that the board has entered the loop function.
+          * @brief Funcție pentru a indica faptul că placa a intrat în funcția loop.
           *
-          * This function sets the LOOP_FUNCTION_ACTIVE_LED pin to HIGH, indicating that the board is in the loop function.
+          * Această funcție setează pinul LOOP_FUNCTION_ACTIVE_LED la nivel înalt, indicând că placa se află în funcția loop.
           *
           * @return void
           */
