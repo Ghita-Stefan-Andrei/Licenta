@@ -1,67 +1,23 @@
-#define LED_PIN 13
-#define NUM_ITERATIONS 5000
+const int buttonPin = 2;   // The pin where the button is connected
+const int outputPin = 13;   // The pin where the square wave will be generated
 
 void setup() {
-  pinMode(LED_PIN, OUTPUT); // Setăm pinul 13 ca ieșire
-  pinMode(2, INPUT);
-  pinMode(3, INPUT);
-  pinMode(4, INPUT);
-  pinMode(5, INPUT);
-  pinMode(6, INPUT);
-  pinMode(12, OUTPUT);
+  pinMode(buttonPin, INPUT); // Set button pin as input with an internal pull-up resistor
+  pinMode(outputPin, OUTPUT);       // Set output pin as output
 }
 
 void loop() {
-  // Blink 5000 times at 10Hz
-  if(digitalRead(2) == HIGH)
-  for (int i = 0; i < NUM_ITERATIONS; i++) {
-    digitalWrite(12, HIGH);
-    digitalWrite(LED_PIN, HIGH); // Setăm pinul 13 HIGH
-    delay(50); // Așteptăm 50ms (jumătate de perioadă pentru 10Hz)
-    digitalWrite(LED_PIN, LOW); // Setăm pinul 13 LOW
-    delay(50); // Așteptăm 50ms (jumătate de perioadă pentru 10Hz)
+  // Check if the button is pressed
+  if (digitalRead(buttonPin) == HIGH) {
+    // Generate a 100Hz square wave
+    for (int i = 0; i < 100; i++) { // Generate 100 cycles of square wave
+      digitalWrite(outputPin, HIGH);
+      delayMicroseconds(5000);      // High for 5ms (half period of 100Hz)
+      digitalWrite(outputPin, LOW);
+      delayMicroseconds(5000);      // Low for 5ms (half period of 100Hz)
+    }
+  } else {
+    digitalWrite(outputPin, LOW); // Ensure the output is low when the button is not pressed
   }
-
-  // Blink 5000 times at 50Hz
-  if(digitalRead(3) == HIGH)
-  for (int i = 0; i < NUM_ITERATIONS; i++) {
-    digitalWrite(12, HIGH);
-    digitalWrite(LED_PIN, HIGH); // Setăm pinul 13 HIGH
-    delay(10); // Așteptăm 10ms (jumătate de perioadă pentru 50Hz)
-    digitalWrite(LED_PIN, LOW); // Setăm pinul 13 LOW
-    delay(10); // Așteptăm 10ms (jumătate de perioadă pentru 50Hz)
-  }
-
-  // Blink 5000 times at 80Hz
-  if(digitalRead(4) == HIGH)
-  for (int i = 0; i < NUM_ITERATIONS; i++) {
-    digitalWrite(12, HIGH);
-    digitalWrite(LED_PIN, HIGH); // Setăm pinul 13 HIGH
-    delayMicroseconds(6250); // Așteptăm 6.25ms (jumătate de perioadă pentru 80Hz)
-    digitalWrite(LED_PIN, LOW); // Setăm pinul 13 LOW
-    delayMicroseconds(6250); // Așteptăm 6.25ms (jumătate de perioadă pentru 80Hz)
-  }
-
-  // Blink 5000 times at 100Hz
-  if(digitalRead(5) == HIGH)
-  for (int i = 0; i < NUM_ITERATIONS; i++) {
-    digitalWrite(12, HIGH);
-    digitalWrite(LED_PIN, HIGH); // Setăm pinul 13 HIGH
-    delay(5); // Așteptăm 5ms (jumătate de perioadă pentru 100Hz)
-    digitalWrite(LED_PIN, LOW); // Setăm pinul 13 LOW
-    delay(5); // Așteptăm 5ms (jumătate de perioadă pentru 100Hz)
-  }
-
-  // Blink 5000 times at 125Hz
-  if(digitalRead(6) == HIGH)
-  for (int i = 0; i < NUM_ITERATIONS; i++) {
-    digitalWrite(12, HIGH);
-    digitalWrite(LED_PIN, HIGH); // Setăm pinul 13 HIGH
-    delay(4); // Așteptăm 4ms (jumătate de perioadă pentru 125Hz)
-    digitalWrite(LED_PIN, LOW); // Setăm pinul 13 LOW
-    delay(4); // Așteptăm 4ms (jumătate de perioadă pentru 125Hz)
-  }
-
-  digitalWrite(12, LOW);
 }
 
