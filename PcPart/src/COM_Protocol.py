@@ -96,7 +96,7 @@ class InterpretPacket:
             ipThirdByte  = self.individualBytes[ByteDex.IP_THIRD_BYTE]
             ipForthByte  = self.individualBytes[ByteDex.IP_FORTH_BYTE]
 
-            return f"Connected to ethernet.\nIP:{ipFirstByte}.{ipSecondByte}.{ipThirdByte}.{ipForthByte}\nPacket: {packet}\n"
+            return f"Conectat la ethernet.\nIP:{ipFirstByte}.{ipSecondByte}.{ipThirdByte}.{ipForthByte}\nPachet: {packet}\n"
 
 
     def decodeTriggerPacket(self, packet, outputType):
@@ -136,20 +136,20 @@ class InterpretPacket:
                ]
         else:
             slope = (
-                    'Rising Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
-                    'Falling Slope' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
-                    "Error: Slope byte missing/wrong."
+                    'Panta crescatoare' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.RISING_SLOPE else
+                    'Panta descrescatoare' if self.individualBytes[ByteDex.SLOPE_BYTE_POSITION] == ByteDex.FALLING_SLOPE else
+                    "Eroare: Octetul de panta lipseste/invalid."
                     )
             return (
-                f"Change detected at {hour:{Format.TIME_DISPLAY_FORMAT}}:"
+                f"Schimbare detectata la {hour:{Format.TIME_DISPLAY_FORMAT}}:"
                 f"{minute:{Format.TIME_DISPLAY_FORMAT}}:"
                 f"{second:{Format.TIME_DISPLAY_FORMAT}}:"
                 f"{milsFH * 100 + milsSH:{Format.TIME_MS_DISPLAY_FORMAT}} on "
                 f"{day:{Format.TIME_DISPLAY_FORMAT}}/"
                 f"{month:{Format.TIME_DISPLAY_FORMAT}}/"
                 f"{year}\n"
-                f"Slope type: {slope}\n"
-                f"Packet: {packet}\n"
+                f"Tipul pantei: {slope}\n"
+                f"Pachet: {packet}\n"
                )
       
     def decodeEthCheckPacket(self, packet):
@@ -167,11 +167,11 @@ class InterpretPacket:
         """
         status = ''
         if self.individualBytes[ByteDex.ETHERNET_CHECK_POS] == ByteDex.CONNECTED:
-            status = f'Connected to ethernet\nPacket: {packet}\n'
+            status = f'Conectat la ethernet\nPachet: {packet}\n'
         elif  self.individualBytes[ByteDex.ETHERNET_CHECK_POS] == ByteDex.NOT_CONNECTED:
-            status = f'Disconnected from ethernet\nPacket: {packet}\n'
+            status = f'Deconectat de la ethernet\nPachet: {packet}\n'
         else:
-            status = f'Unknown\nPacket: {packet}\n'
+            status = f'Necunoscut\nPachet: {packet}\n'
         
         return status
         
@@ -179,9 +179,9 @@ class InterpretPacket:
         status = ''
 
         if self.individualBytes[ByteDex.NTP_STATUS_BYTE_POSITION] == ByteDex.NTP_STATUS_UPDATED:
-            status = f'NTP Client is updated.\nPacket: {packet}\n'
+            status = f'Clientul NTP este actualizat.\nPachet: {packet}\n'
         elif  self.individualBytes[ByteDex.NTP_STATUS_BYTE_POSITION] == ByteDex.NTP_STATUS_NOT_UPDATED:
-            status = f'Trigger signal registered but the NTP Client is not updated.\nPacket: {packet}\n'
+            status = f'Clientul NTP nu a fost acutalizat cand a fost detectata o schimbare a semnalului.\nPachet: {packet}\n'
 
         return status
 
@@ -211,7 +211,7 @@ class InterpretPacket:
                 justTime = ''
 
         elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.BOOT_BYTE:
-            decodedData = f'Board booted up\nPacket: {packet}\n'
+            decodedData = f'Placa a intrat in functia setup, asteptati aprinderea ledului albastru\nPachet: {packet}\n'
         
         elif self.individualBytes[ByteDex.TYPE_BYTE_POSITION] == ByteDex.ETHERNET_STATUS_BYTE:
             decodedData = self.decodeEthPacket(packet)
@@ -223,7 +223,7 @@ class InterpretPacket:
             decodedData = self.decodeNTPStatusPacket(packet)
 
         else:
-            decodedData = f"Unknown packet type: {hex(self.individualBytes[ByteDex.TYPE_BYTE_POSITION])[2:].upper()}"
+            decodedData = f"Tip de pachet necunoscut: {hex(self.individualBytes[ByteDex.TYPE_BYTE_POSITION])[2:].upper()}"
         
         return decodedData, justTime
 

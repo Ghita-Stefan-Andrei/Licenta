@@ -14,8 +14,7 @@ outputType = args.outputType
 decoder = InP()
 
 ser = serial.Serial(com, bitRate)
-print(f'Serial configured on {com} with {bitRate} bitrate.')
-print('Listening...')
+print(f'Comunicarea pe seriala se realizeaza pe {com} cu {bitRate} bitrate.')
 
 while True:
     #Reads characters one by one from the serial stream, and returns a header when byte 0xAA is found. 
