@@ -7,3 +7,8 @@ PcPart/src/__pycache__
 Measurement
 LucrareScrisa
 ActeLicenta
+*.pdf
+*.zip
+*.pptx
+Prezentare_*
+CD
