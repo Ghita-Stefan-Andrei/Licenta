@@ -18,7 +18,7 @@ bool reconected = false;
 ethInfo ethInfoStatus;
 EthernetLinkStatus lastEthStatus;
 EthernetModule ethModule;
-LedDriver ledDriver();
+LedDriver ledDriver;
 
 /**
  * @brief Initializes the Ethernet connection and retrieves the IP address status.
